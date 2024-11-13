@@ -12,15 +12,17 @@ To get started with the course:
 2. Create a virtual environment
     ```bash
     python -m venv .venv
+    pip freeze "|" less to know the versions
 3. Activate the environment
    ```bash
     # On Mac
-    .venv/bin/activate
+    source .venv/bin/activate
     # On Windows
     .venv\Scripts\activate
 4. Install requirements
     ```bash
     pip install -r requirements.txt
+    if you have make only use make install
 ## Table of Contents
 
 - [Building an End-to-End Retrieval-Augmented Generation System](#building-an-end-to-end-retrieval-augmented-generation-system)
