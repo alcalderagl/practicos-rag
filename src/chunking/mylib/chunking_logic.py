@@ -11,6 +11,7 @@ def chuck_doc(document:Document):
         separator='',
         strip_whitespace=True
     )
+    # chucking docs
     docs = text_splitter.create_documents([document.doc])
     document_dicts = [{"metadata": doc.metadata, "page_content": doc.page_content} for doc in docs]
     return document_dicts
