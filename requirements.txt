@@ -6,6 +6,14 @@ fire==0.7.0
 fastapi==0.115.4
 uvicorn==0.32.0
 spacy==3.7.5
-langchain==0.3.7
-langchain-core==0.3.17
-langchain-text-splitters==0.3.2
+langchain-community
+#langchain==0.3.7
+#langchain-core==0.3.17
+#langchain-text-splitters==0.3.2
+
+pdfminer.six
+#pypdf
+streamlit==1.40.1
+pi_heif
+unstructured
+unstructured[local-inference]
