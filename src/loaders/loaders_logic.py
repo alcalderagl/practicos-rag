@@ -8,14 +8,14 @@ def load_pfd(path: str, islocal: bool = True):
     @isLocal: it determines if it's local o remote load
     returns a generator object to yields one item at time (lazy-evaluated)
     """
-    
+
     try:
         # catch an error in a friendly way to dont stop program execution
         if islocal:
-             # if it is local then
+            # if it is local then
             _load_local_pdf(path)
         else:
-            # otherwise
+            # otherwise
             _load_online_pdf(path)
     except Exception as e:
         # catching the exception error
@@ -52,6 +52,7 @@ def _builderObject(data):
         for page in data
     )
     return pages
+
 
 # if __name__ == '__main__':
 #     test_it = "https://aragohv.com/wp-content/uploads/2019/06/comportamientofelino.pdf"
