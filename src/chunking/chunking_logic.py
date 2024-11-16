@@ -12,10 +12,12 @@ def chuck_doc(document: str):
     # chucking docs
     chuncks = text_splitter.create_documents([document])
     # return a generator object (lazy-evaluated)
-    document_dicts = (
-        {"metadata": chunck.metadata, "pageContent": chunck.page_content}
-        for chunck in chuncks
-    )
-    return document_dicts
+    # print(chuncks[0])
 
+    # document_dicts = (
+    #    {"metadata": chunck.metadata, "pageContent": chunck.page_content}
+    #    for chunck in chuncks
+    # )
+    # return document_dicts
 
+    return "hello"
