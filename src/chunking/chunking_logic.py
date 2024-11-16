@@ -17,3 +17,5 @@ def chuck_doc(document: str):
         for chunck in chuncks
     )
     return document_dicts
+
+
