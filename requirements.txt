@@ -17,3 +17,4 @@ streamlit==1.40.1
 pi_heif
 unstructured
 unstructured[local-inference]
+watchdog
