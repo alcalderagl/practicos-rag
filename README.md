@@ -21,7 +21,9 @@ To get started with the course:
     .venv\Scripts\activate
 4. Install requirements
     ```bash
-    pip install -r requirements.txt or use make <<only use make install>>
+    pip install -r requirements.txt or use make only use make install
+5. Run streamlit app
+    ```streamlit run main_app.py
 ## Table of Contents
 
 - [Building an End-to-End Retrieval-Augmented Generation System](#building-an-end-to-end-retrieval-augmented-generation-system)
