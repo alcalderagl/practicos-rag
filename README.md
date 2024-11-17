@@ -27,18 +27,18 @@ To get started with the course:
     streamlit run main_app.py
 
 
-# integration changes
+## integration changes
 
 Before add files to head it is necessary to
 
-1. Run tslint to check any problem with the project if 
+1. Run tslint to check any problem with the project
     ``` bash
     make tslint
-2. Run format to format code to checkstyle files
+2. Run format to format code to apply checkstyle files
     ``` bash
     make format
-3. If format and list <p style="background-color:red, color:white">Failed</p> fix errors and proceed step 1
-4. If format and list <p style="background-color:green">Passed</p> proceed step 5
+3. If format and list `Failed` fix errors and proceed step 1
+4. If format and list `Passed` proceed step 5
 5. Add your files to head
     ``` bash
     git add files
