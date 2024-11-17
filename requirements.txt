@@ -18,3 +18,4 @@ pi_heif
 unstructured
 unstructured[local-inference]
 watchdog
+pre-commit
