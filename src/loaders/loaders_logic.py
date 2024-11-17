@@ -11,9 +11,9 @@ from src.commons.files_logic import (
 )
 
 
-def upload_document(path_dir: str, document: any, filename: str):
-    createFolder(path_dir)
-    file_path = generate_file_path(path_dir, filename)
+def upload_document(dir_path: str, document: any, filename: str):
+    createFolder(dir_path)
+    file_path = generate_file_path(dir_path, filename)
     file_already_exist = existsFile(file_path)
     if file_already_exist:
         message = LOGG_MESSAGES["LOADER_FILE_ALREADY_EXIST"].format(filename=filename)

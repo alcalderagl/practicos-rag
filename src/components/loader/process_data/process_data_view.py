@@ -15,11 +15,11 @@ for uploaded_file in uploaded_files:
     if uploaded_file is not None:
         bytes_data = uploaded_file.read()
         file_name = uploaded_file.name
-        dir = "data/regulaciones"
+        dir_path = "data/regulaciones"
 
         with st.spinner("Wait for it..."):
             loaded_data = upload_document(
-                dir=dir, document=bytes_data, filename=file_name
+                dir_path=dir_path, document=bytes_data, filename=file_name
             )
             resp_msg = loaded_data.message
             resp_loader = loaded_data.response

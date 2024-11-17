@@ -26,7 +26,6 @@ To get started with the course:
     ```bash
     streamlit run main_app.py
 
-
 ## Integration changes
 
 Before add files to head it is necessary to
