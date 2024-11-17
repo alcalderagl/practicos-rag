@@ -23,5 +23,5 @@ def file_extension(filename: str):
     return os.path.splitext(filename)[1][1:].lower()
 
 
-def generate_file_path(dir: str, filename: str):
-    return os.path.join(dir, filename)
+def generate_file_path(path_dir: str, filename: str):
+    return os.path.join(path_dir, filename)

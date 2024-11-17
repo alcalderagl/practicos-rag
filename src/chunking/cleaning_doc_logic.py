@@ -13,7 +13,7 @@ def clean_doc(document: str):
     """
     # if you have more computational ressources use es_core_news_lg or es_dep_news_trf
     nlp = spacy.load("es_core_news_sm")
-    spacy_stopwords = spacy.lang.es.stop_words.STOP_WORDS
+    # spacy_stopwords = spacy.lang.es.stop_words.STOP_WORDS
     # tokenization of document
     doc = nlp.tokenizer(document)
     # cleaning text

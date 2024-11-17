@@ -6,13 +6,17 @@ def chuck_doc(document: str):
     """
     function to chuck loader pages
     """
-    text_splitter = CharacterTextSplitter(
-        chunk_size=35, chunk_overlap=0, separator="", strip_whitespace=True
-    )
-    # chucking docs
-    chuncks = text_splitter.create_documents([document])
+
     # return a generator object (lazy-evaluated)
-    # print(chuncks[0])
+    try:
+        text_splitter = CharacterTextSplitter(
+            chunk_size=35, chunk_overlap=0, separator="", strip_whitespace=True
+        )
+        # chucking docs
+        chuncks = text_splitter.create_documents([document])
+        print(chuncks)
+    except (ValueError, KeyError) as e:
+        print(e)
 
     # document_dicts = (
     #    {"metadata": chunck.metadata, "pageContent": chunck.page_content}

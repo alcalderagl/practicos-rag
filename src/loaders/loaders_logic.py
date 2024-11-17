@@ -10,12 +10,10 @@ from src.commons.files_logic import (
     file_extension,
 )
 
-# ['pdf', 'csv', 'xlsx', 'xls', 'docx', 'txt']
 
-
-def upload_document(dir: str, document: any, filename: str):
-    createFolder(dir)
-    file_path = generate_file_path(dir, filename)
+def upload_document(path_dir: str, document: any, filename: str):
+    createFolder(path_dir)
+    file_path = generate_file_path(path_dir, filename)
     file_already_exist = existsFile(file_path)
     if file_already_exist:
         message = LOGG_MESSAGES["LOADER_FILE_ALREADY_EXIST"].format(filename=filename)
@@ -31,17 +29,17 @@ def upload_document(dir: str, document: any, filename: str):
 
 def _load_document(filename: str, file_path: str):
     file_ext = file_extension(filename)
-    documents = _document_loaders()
+    documents = _document_loaders(file_path)
     if file_ext in documents:
         try:
-            loader_response = documents[file_ext](file_path)
+            loader_response = documents[file_ext]
             result_loader = {"file_ext": file_ext, "response": loader_response}
             message = LOGG_MESSAGES["LOADER_DOCUMENT_ADDED"].format(filename=filename)
             response = ResponseLogic(
                 message=message, response=result_loader, typeMessage=TypeMessage.INFO
             )
             return response
-        except Exception as e:
+        except (ValueError, KeyError) as e:
             # catching the exception error
             message = LOGG_MESSAGES["LOADER_ERROR_LOADING"].format(error=e)
             response = ResponseLogic(
@@ -58,10 +56,11 @@ def _load_document(filename: str, file_path: str):
         return response
 
 
-def _document_loaders():
+def _document_loaders(path):
+    # ['pdf', 'csv', 'xlsx', 'xls', 'docx', 'txt']
     documents = {
         #'csv': lambda path: (),
-        "pdf": lambda path: PDFLoader(path)
+        "pdf": PDFLoader(path)
         #'txt': lambda path: (),
     }
     return documents

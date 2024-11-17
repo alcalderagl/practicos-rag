@@ -27,7 +27,7 @@ To get started with the course:
     streamlit run main_app.py
 
 
-## integration changes
+## Integration changes
 
 Before add files to head it is necessary to
 
