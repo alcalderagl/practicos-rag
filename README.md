@@ -12,18 +12,42 @@ To get started with the course:
 2. Create a virtual environment
     ```bash
     python -m venv .venv
-    pip freeze "|" less to know the versions
+    pip freeze | less to know the versions
 3. Activate the environment
    ```bash
     # On Mac
-    source .venv/bin/activate
+    .venv/bin/activate or source .venv/bin/activate
     # On Windows
     .venv\Scripts\activate
 4. Install requirements
     ```bash
-    pip install -r requirements.txt or use make only use make install
-5. Run streamlit app
-    ```streamlit run main_app.py
+    pip install -r requirements.txt or make install
+5. Run app
+    ```bash
+    streamlit run main_app.py
+
+## Integration changes
+
+Before add files to head it is necessary to
+
+1. Run tslint to check any problem with the project
+    ``` bash
+    make tslint
+2. Run format to format code to apply checkstyle files
+    ``` bash
+    make format
+3. If format and list `Failed` fix errors and proceed step 1
+4. If format and list `Passed` proceed step 5
+5. Add your files to head
+    ``` bash
+    git add files
+7. Proceed to commit with a message personalized
+    ``` bash
+    git commit -m message
+8. Finally publish your changes to your branch 
+    ``` bash 
+    git push origin or git push
+
 ## Table of Contents
 
 - [Building an End-to-End Retrieval-Augmented Generation System](#building-an-end-to-end-retrieval-augmented-generation-system)
