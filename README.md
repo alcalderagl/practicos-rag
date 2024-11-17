@@ -29,20 +29,25 @@ To get started with the course:
 
 # integration changes
 
-Before commit your changes it is necessary to
+Before add files to head it is necessary to
 
-1. git add `your files`
-2. run the following command, IMPORTANT it is only required the first time!
+1. Run tslint to check any problem with the project if 
+    ``` bash
+    make tslint
+2. Run format to format code to checkstyle files
+    ``` bash
+    make format
+3. If format and list <p style="background-color:red, color:white">Failed</p> fix errors and proceed step 1
+4. If format and list <p style="background-color:green">Passed</p> proceed step 5
+5. Add your files to head
+    ``` bash
+    git add files
+7. Proceed to commit with a message personalized
+    ``` bash
+    git commit -m message
+8. Finally publish your changes to your branch 
     ``` bash 
-    pre-commit install --hook-type pre-push
-4. Run pre-commit checks manually to ensure setup
-    ``` bash
-    pre-commit run --all-files
-5. if format and list <p style="background-color:green">passed</p>
-6. proceed to `git commit -m "message"`, otherwise run the following commands and proceed to run integration changes again
-    ``` bash
-    make format and make tslint
-7. git push origin or git push
+    git push origin or git push
 
 ## Table of Contents
 
