@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Optional
 from pydantic import BaseModel
 from src.commons.enums.type_message import TypeMessage
 
@@ -6,7 +6,7 @@ from src.commons.enums.type_message import TypeMessage
 class LoaderModel(BaseModel):
     pageContent: str
     source: str
-    page: str
+    page: int
 
 class FileModel(BaseModel):
     fileExt: str

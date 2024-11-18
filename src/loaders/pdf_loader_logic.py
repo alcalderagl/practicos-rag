@@ -13,8 +13,8 @@ def PDFLoader(file_path: str):
 
     Returns
     -------
-    PDFLoaderModel
-        returns a generator object to yields one item at time (lazy-evaluated)
+    LoaderModel
+        returns an array of LoaderModel
     """
     loader = PyPDFLoader(file_path)
     document = loader.load_and_split()
@@ -33,15 +33,15 @@ def _PDFPages(pages: any):
 
     Returns
     -------
-    PDFLoaderModel
-        this returns a generator object (lazy-evaluated).
+    LoaderModel
+        this returns an array of LoaderModel
     """
-    pdfPageResp = (
+    pdfPageResp = [
         LoaderModel(
             pageContent=page.page_content,
             source=page.metadata["source"],
             page=page.metadata["page"],
         )
         for page in pages
-    )
+    ]
     return pdfPageResp

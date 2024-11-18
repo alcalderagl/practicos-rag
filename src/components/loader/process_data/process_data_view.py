@@ -22,22 +22,20 @@ for uploaded_file in uploaded_files:
         file_name:str = uploaded_file.name
         # directory path
         dir_path:str = "data/regulaciones"
-        # directory path + file.ext
-        dir_path:str = generate_file_path(dir_path, file_name)
         with st.spinner(LOGG_MESSAGES["APP_LABEL_PROCESSING_FILE"]):
             # store document
             uploadResp = upload_file(dir_path=dir_path, document=bytes_data, filename=file_name)
-            if uploadResp.typeMessage == TypeMessage.INFO:
+            if uploadResp.typeMessage == TypeMessage.INFO and uploadResp.response:
                 # if document was sucessfully stored then
                 # 1. loader process
-                respLoader =  file_loader(dir_path, file_name)
+                respLoader =     file_loader(uploadResp.response, file_name)
                 # show a message depending on type message response loader
                 if respLoader.typeMessage == TypeMessage.INFO:
                     # 2. CLEANING EXPANDER
                     clean_docs = cleaning_expander(respLoader, file_name)
                     # 3. CHUNCKING EXPANDER
                     chuncking_expander(clean_docs)
-                elif respLoader.TypeMessage == TypeMessage.ERROR:
+                elif respLoader.typeMessage == TypeMessage.ERROR:
                     # otherwise show an error message
                     st.error(respLoader.message, icon="🚨")
                 elif respLoader.typeMessage == TypeMessage.WARNING:

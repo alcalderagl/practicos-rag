@@ -25,13 +25,15 @@ def file_loader(dir_path: str, file_name: str):
     """
     # get file extension and removes .
     file_ext = file_extension(dir_path)[1:]
-    # get file method respect to its file extension
-    documents = _document_loaders(file_ext)
+    # pass directory path to disponible loader files
+    loader_files = _loader_files()
     response = None
-    if file_ext in documents:
+    if file_ext in loader_files:
         # if file_ext is allowed then
         try:
-            loader_response = documents[file_ext]
+            # get file method respect to its file extension
+            loader_response = loader_files[file_ext](dir_path)
+            print(">>>>>", loader_response)
             file_resp = FileModel(fileExt=file_ext, response=loader_response)
             message = LOGG_MESSAGES["LOADER_DOCUMENT_ADDED"].format(filename=file_name)
             response = LoaderResponse(
@@ -41,7 +43,9 @@ def file_loader(dir_path: str, file_name: str):
             # catching the exception error
             message = LOGG_MESSAGES["LOADER_ERROR_LOADING"].format(error=e)
             response = LoaderResponse(
-                message=message, typeMessage=TypeMessage.ERROR, response=None
+                message=message,
+                typeMessage=TypeMessage.ERROR,
+                response=FileModel(fileExt="", response=[]),
             )
     else:
         # unsopported file extension
@@ -55,7 +59,7 @@ def file_loader(dir_path: str, file_name: str):
     return response
 
 
-def _document_loaders(dir_path):
+def _loader_files():
     # ['pdf', 'csv', 'xlsx', 'xls', 'docx', 'txt']
-    documents = {"pdf": PDFLoader(dir_path)}
+    documents = {"pdf": lambda dir_path: PDFLoader(dir_path)}
     return documents

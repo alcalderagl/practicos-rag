@@ -107,23 +107,23 @@ def upload_file(dir_path: str, document: bytes, filename: str):
     """
     # create folder
     createFolder(dir_path)
+    file_path: str = generate_file_path(dir_path, filename)
     # validate if file_path exists
-    file_already_exist = existsFile(dir_path)
-
+    file_already_exist = existsFile(file_path)
+    response = None
     if file_already_exist:
         # if file already exists
         message = LOGG_MESSAGES["LOADER_FILE_ALREADY_EXIST"].format(filename=filename)
         response = ResponseLogic(
             message=message, typeMessage=TypeMessage.WARNING, response=None
         )
-        # return message
-        return response
     else:
         # other wise store the document
-        save_document(dir_path, document)
+        save_document(file_path, document)
         response = ResponseLogic(
             message=LOGG_MESSAGES["LOADER_STORE_FILE"],
             typeMessage=TypeMessage.INFO,
-            response=None,
+            response=file_path,
         )
-        return response
+
+    return response
