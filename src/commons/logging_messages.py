@@ -1,9 +1,17 @@
 LOGG_MESSAGES = {
+    "LOADER_STORE_FILE": "The document was sucessfully stored",
     "LOADER_FILE_ALREADY_EXIST": 'The document "{filename}" was uploaded already.',
     "LOADER_DOCUMENT_ADDED": 'The document "{filename}" was sucessfully added.',
     "LOADER_ERROR_LOADING": "Error while loading the document {error}.",
     "LOADER_UNKNOWN_FILE": 'The document "{filename}" with extension {ext} is not supported.',
+    "APP_LABEL_LOADER_TITLE": "Load and process documents",
+    "APP_LABEL_CHOOSE_FILES": "Choose files",
+    "APP_LABEL_PROCESSING_FILE": "Processing file ...",
     "APP_LABEL_CLEANING_FILE": "Cleaning file - {filename}",
     "APP_LABEL_CHUNCKING_FILE": "Chuncking file - {filename}",
+    "APP_LABEL_PAGE": "Page {no_page}",
+    "APP_LABEL_DOCUMENT_LOADED": "Document loaded",
+    "APP_LABEL_DOCUMENT_CLEANED": "Document cleaned",
+    "APP_LABEL_PROCESS_COMPLETED": "Process completed",
     "CHUNCKING_N_PROCESS": "Processing page {page}",
 }
