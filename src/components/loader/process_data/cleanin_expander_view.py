@@ -23,30 +23,31 @@ def cleaning_expander(resp_loader: LoaderResponse, file_name: str):
     with st.expander(
         LOGG_MESSAGES["APP_LABEL_CLEANING_FILE"].format(filename=file_name)
     ):
+        st.write("")
         # iterate document loaded
         for index, page in enumerate(resp_loader.response.response):
             # expander pages load & clean
-            with st.expander(LOGG_MESSAGES["APP_LABEL_CLEANING_FILE"].format(no_page=str(index + 1))):
-                with st.container():
-                    col1, col2 = st.columns(
+            st.title(LOGG_MESSAGES["APP_LABEL_PAGE"].format(no_page=str(index + 1)))
+            with st.container():
+                col1, col2 = st.columns(
                         2, vertical_alignment="top", gap="medium"
-                    )
-                    with col1:
-                        # this column present load document #n_page
-                        if index == 0:
-                            # title
-                            st.header(LOGG_MESSAGES["APP_DOCUMENT_LOADED"])
-                            # show page content of document loaded
-                            st.write(page.pageContent)
+                )
+                with col1:
+                    # this column present load document #n_page
+                    if index == 0:
+                        # title
+                        st.header(LOGG_MESSAGES["APP_LABEL_DOCUMENT_LOADED"])
+                    # show page content of document loaded
+                    st.write(page.pageContent)
                     with col2:
                         # this column present clean document #n_page
                         if index == 0:
                             # title
-                            st.header(LOGG_MESSAGES["APP_DOCUMENT_CLEANED"])
-                            # clean process
-                            document = clean_doc(page.pageContent)
-                            # store into list the document cleaned
-                            cleaning_docs.append(document)
-                            # show document page cleaned
-                            st.write(document)
-    return cleaning_docs
+                            st.header(LOGG_MESSAGES["APP_LABEL_DOCUMENT_CLEANED"])
+                        # clean process
+                        document = clean_doc(page.pageContent)
+                        # store into list the document cleaned
+                        cleaning_docs.append(document)
+                        # show document page cleaned
+                        st.write(document)
+        return cleaning_docs

@@ -33,7 +33,6 @@ def file_loader(dir_path: str, file_name: str):
         try:
             # get file method respect to its file extension
             loader_response = loader_files[file_ext](dir_path)
-            print(">>>>>", loader_response)
             file_resp = FileModel(fileExt=file_ext, response=loader_response)
             message = LOGG_MESSAGES["LOADER_DOCUMENT_ADDED"].format(filename=file_name)
             response = LoaderResponse(
