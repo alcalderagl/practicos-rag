@@ -1,29 +1,47 @@
 from langchain_community.document_loaders import PyPDFLoader
+from src.commons.models.loaders.loader_response import LoaderModel
 
 
-def PDFLoader(path_route: str):
+def PDFLoader(file_path: str):
     """
-    this function could load online or local pdf
-    @path: it could be an URL if it's not loca and a path if it is local
-    @isLocal: it determines if it's local o remote load
-    returns a generator object to yields one item at time (lazy-evaluated)
+    Load document into PyPDFLoader langchain library
+
+    Parameters
+    ----------
+    file_path : str
+        Directory path
+
+    Returns
+    -------
+    LoaderModel
+        returns an array of LoaderModel
     """
-    loader = PyPDFLoader(path_route)
+    loader = PyPDFLoader(file_path)
     document = loader.load_and_split()
     pages = _PDFPages(document)
     return pages
 
 
-def _PDFPages(pages):
+def _PDFPages(pages: any):
     """
-    this returns a generator object (lazy-evaluated)
+    Load document into PDFLoader langchain library
+
+    Parameters
+    ----------
+    pages : any
+        Directory path
+
+    Returns
+    -------
+    LoaderModel
+        this returns an array of LoaderModel
     """
-    pdfPageResp = (
-        {
-            "pageContent": page.page_content,
-            "source": page.metadata["source"],
-            "page": page.metadata["page"],
-        }
+    pdfPageResp = [
+        LoaderModel(
+            pageContent=page.page_content,
+            source=page.metadata["source"],
+            page=page.metadata["page"],
+        )
         for page in pages
-    )
+    ]
     return pdfPageResp

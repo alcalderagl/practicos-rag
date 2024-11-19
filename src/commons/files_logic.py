@@ -1,4 +1,8 @@
 import os
+from pathlib import Path
+from src.commons.logging_messages import LOGG_MESSAGES
+from src.commons.models.response_logic import ResponseLogic
+from src.commons.enums.type_message import TypeMessage
 
 
 def existsFile(file_path: str):
@@ -30,7 +34,18 @@ def createFolder(dir_path: str):
     os.makedirs(dir_path, exist_ok=True)
 
 
-def save_document(file_path: str, document: any):
+def save_document(file_path: str, document: bytes):
+    """
+    Write into the file path the binary document
+
+    Parameters
+    ----------
+    dir_path : str
+        The directory location to save the document
+
+    document: bytes
+        document binary
+    """
     with open(file_path, "wb") as file:
         file.write(document)
 
@@ -49,7 +64,8 @@ def file_extension(filename: str):
     str
         The file extension
     """
-    return os.path.splitext(filename)[1][1:].lower()
+    file = Path(filename)
+    return file.suffix
 
 
 def generate_file_path(dir_path: str, filename: str):
@@ -69,3 +85,45 @@ def generate_file_path(dir_path: str, filename: str):
         the file extension
     """
     return os.path.join(dir_path, filename)
+
+
+def upload_file(dir_path: str, document: bytes, filename: str):
+    """
+    Upload a document to an specify directory
+
+    Parameters
+    ----------
+    dir_path : str
+        Directory path
+    document : bytes
+        bynary document to store locally
+    filename : str
+        The file name with its extension
+
+    Returns
+    -------
+    ResponseLogic
+        An instance of ResponseLogic containing details about the upload operation.
+    """
+    # create folder
+    createFolder(dir_path)
+    file_path: str = generate_file_path(dir_path, filename)
+    # validate if file_path exists
+    file_already_exist = existsFile(file_path)
+    response = None
+    if file_already_exist:
+        # if file already exists
+        message = LOGG_MESSAGES["LOADER_FILE_ALREADY_EXIST"].format(filename=filename)
+        response = ResponseLogic(
+            message=message, typeMessage=TypeMessage.WARNING, response=None
+        )
+    else:
+        # other wise store the document
+        save_document(file_path, document)
+        response = ResponseLogic(
+            message=LOGG_MESSAGES["LOADER_STORE_FILE"],
+            typeMessage=TypeMessage.INFO,
+            response=file_path,
+        )
+
+    return response

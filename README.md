@@ -32,7 +32,7 @@ Before add files to head it is necessary to
 
 1. Run tslint to check any problem with the project
     ``` bash
-    make tslint
+    make lint
 2. Run format to format code to apply checkstyle files
     ``` bash
     make format

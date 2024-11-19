@@ -1,54 +1,27 @@
-version: '3.8'
+version: '3.11.5'
+
 services:
   streamlit-app:
-    build: 
-      context: .
-      dockerfile: Dockerfile
+    build: .
+    container_name: streamlit-app
     ports:
-      - "8501: 8501"
+      - "8501:8501"
+    volumes:
+      - ./data:/app/data  # Mount a volume for saved files
     depends_on:
-      - chunkingService
-      - embeddingService
-      - loadersService
-      - retrieversService
-      - vectorStoreService
-  chunkingService:
-    build:
-      context: ./src/chunking
-      dockerfile: Dockerfile.chunking
-    ports:
-      - "5000:5000"
-  embeddingService:
-    build:
-      context: ./src/embedding
-      dockerfile: Dockerfile.embedding
-    ports:
-      - "5001:5001"
-  loadersService:
-    build:
-      context: ./src/loaders
-      dockerfile: Dockerfile.loaders
-    ports:
-      - "5002:5002"
-  retrieversService:
-    build:
-      context: ./src/retrievers
-      dockerfile: Dockerfile.retrievers
-    ports:
-      - "5003:5003"
-  vectorStoreService:
-    build:
-      context: ./src/vectorStoreService
-      dockerfile: Dockerfile.vectorStore
-    ports:
-      - "5004:5004"
+      - qdrant
+    environment:
+      - QDRANT_HOST=qdrant
+      - QDRANT_PORT=6333
+
   qdrant:
-    image: qdrant/qdrant
+    image: qdrant/qdrant:v1.3.2
     container_name: qdrant
     ports:
       - "6333:6333"
     volumes:
-      - qdrant_storage:/qdrant/storage
+      - qdrant_data:/qdrant/storage
+
 volumes:
-  qdrant_storage
+  qdrant_data:
 
