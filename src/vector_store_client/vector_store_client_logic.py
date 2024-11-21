@@ -23,24 +23,13 @@ class VectorStoreManager:
 
         self.vectors_params = vectors_params
 
-    def create_vectorStore(self):
-        """
-        Builds vector store
+        self.create_collection()
 
-        Returns
-        -------
-        ResponseLogic:
-            Returns vector store
-        """
-        try:
-            self.vector_store = Qdrant(
-                client= self._client,
-                collection_name = self.collection_name,
-                embeddings= self._embedding_model
-            )
-            return self.vector_store
-        except (ValueError, KeyError) as e:
-            return None
+        self.vector_store = Qdrant(
+            client=self._client,
+            collection_name=self.collection_name,
+            embeddings=self._embedding_model,
+        )
 
     def create_collection(self) -> ResponseLogic:
         """
@@ -63,7 +52,8 @@ class VectorStoreManager:
                 )
             else:
                 self._client.create_collection(
-                    collection_name=self.collection_name, vectors_config=self.vectors_params
+                    collection_name=self.collection_name,
+                    vectors_config=self.vectors_params,
                 )
                 resp = ResponseLogic(
                     response=None,
