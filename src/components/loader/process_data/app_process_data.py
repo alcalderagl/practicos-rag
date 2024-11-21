@@ -3,8 +3,8 @@ from src.commons.files_logic import upload_file
 from src.loaders.loaders_logic import file_loader
 from src.commons.logging_messages import LOGG_MESSAGES
 from src.commons.enums.type_message import TypeMessage
-from src.components.loader.process_data.cleanin_expander_view import cleaning_expander
-from src.components.loader.process_data.chuncking_expander_view import chuncking_expander
+from src.components.loader.process_data.app_cleanin_expander import cleaning_expander
+from src.components.loader.process_data.app_chuncking_expander import chuncking_expander
 
 st.title(LOGG_MESSAGES["APP_LABEL_LOADER_TITLE"])
 # upload files st component

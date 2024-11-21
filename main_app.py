@@ -3,12 +3,14 @@ import streamlit as st
 pages = {
     "Load files and process data": [
         st.Page(
-            "src/components/loader/process_data/process_data_view.py",
+            "src/components/loader/process_data/app_process_data.py",
             title="Load and process data",
         ),
-        st.Page("src/components/loader/directory/directory_view.py", title="Directory"),
+        st.Page("src/components/loader/directory/app_directory.py", title="Directory"),
     ],
-    "Chat": [st.Page("src/components/chat_view.py", title="RAG App")],
+    "retriever": [
+        st.Page("src/components/retrievers/app_retriever.py", title="Retriever")
+    ],
 }
 
 pg = st.navigation(pages)
