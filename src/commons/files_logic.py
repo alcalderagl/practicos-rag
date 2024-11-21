@@ -5,7 +5,7 @@ from src.commons.models.response_logic import ResponseLogic
 from src.commons.enums.type_message import TypeMessage
 
 
-def existsFile(file_path: str):
+def existsFile(file_path: str) -> bool:
     """
     Validates if the file exists into a directory
 
@@ -22,7 +22,7 @@ def existsFile(file_path: str):
     return os.path.exists(file_path)
 
 
-def createFolder(dir_path: str):
+def createFolder(dir_path: str) -> str:
     """
     Create a local folder
 
@@ -50,7 +50,7 @@ def save_document(file_path: str, document: bytes):
         file.write(document)
 
 
-def file_extension(filename: str):
+def file_extension(filename: str) -> str:
     """
     Gets file extension by file name
 
@@ -68,7 +68,7 @@ def file_extension(filename: str):
     return file.suffix
 
 
-def generate_file_path(dir_path: str, filename: str):
+def generate_file_path(dir_path: str, filename: str) -> str:
     """
     Build a path with directory path and file name
 
@@ -87,7 +87,7 @@ def generate_file_path(dir_path: str, filename: str):
     return os.path.join(dir_path, filename)
 
 
-def upload_file(dir_path: str, document: bytes, filename: str):
+def upload_file(dir_path: str, document: bytes, filename: str) -> ResponseLogic:
     """
     Upload a document to an specify directory
 
