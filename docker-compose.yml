@@ -13,6 +13,11 @@ services:
     environment:
       - QDRANT_HOST=qdrant
       - QDRANT_PORT=6333
+      - VECTOR_STORE_NAME=regulaciones_mx
+      - MODEL_EMBEDDING=sentence-transformers/all-MiniLM-L6-v2
+      - VECTOR_SIZE=384
+        
+
 
   qdrant:
     image: qdrant/qdrant:v1.3.2

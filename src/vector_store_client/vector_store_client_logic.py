@@ -1,5 +1,6 @@
+import os
 from qdrant_client import QdrantClient
-from qdrant_client.http.models import VectorParams
+from qdrant_client.http.models import VectorParams, Distance
 from langchain_community.embeddings import HuggingFaceEmbeddings
 from langchain.vectorstores import Qdrant
 from src.commons.enums.type_message import TypeMessage
@@ -9,19 +10,25 @@ from src.commons.models.response_logic import ResponseLogic
 
 class VectorStoreManager:
 
-    def __init__(
-        self, collection_name: str, model_name: str, vectors_params: VectorParams
-    ):
-        self.collection_name = collection_name
-        self.model_name = model_name
+    def __init__(self):
+
+        self.collection_name = os.getenv("VECTOR_STORE_NAME", "default_collection")
+        self._port = os.getenv("QDRANT_PORT", "6333")
+        self.model_name = os.getenv(
+            "MODEL_EMBEDDING", "sentence-transformers/all-MiniLM-L6-v2"
+        )
+        self._host = os.getenv("QDRANT_HOST", "localhost")
+        self.vector_size = os.getenv("VECTOR_SIZE", "384")
+
+        self._vectors_params = VectorParams(
+            size=self.vector_size, distance=Distance.COSINE
+        )
 
         # Initialize Qdrant client
-        self._client = QdrantClient(host="localhost", port=int("6333"))
+        self._client = QdrantClient(host=self._host, port=self._port)
 
         # Initialize embedding model
         self._embedding_model = HuggingFaceEmbeddings(model_name=self.model_name)
-
-        self.vectors_params = vectors_params
 
         self.create_collection()
 
