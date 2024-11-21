@@ -4,6 +4,7 @@ LOGG_MESSAGES = {
     "LOADER_DOCUMENT_ADDED": 'The document "{filename}" was sucessfully added.',
     "LOADER_ERROR_LOADING": "Error while loading the document {error}.",
     "LOADER_UNKNOWN_FILE": 'The document "{filename}" with extension {ext} is not supported.',
+    "CHUNCKING_ERROR": "Error while chunking the document: {error}",
     "APP_LABEL_LOADER_TITLE": "Load and process documents",
     "APP_LABEL_CHOOSE_FILES": "Choose files",
     "APP_LABEL_PROCESSING_FILE": "Processing file ...",

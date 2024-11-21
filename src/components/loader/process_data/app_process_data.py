@@ -36,7 +36,7 @@ for uploaded_file in uploaded_files:
                     # 2. CLEANING EXPANDER
                     clean_docs = cleaning_expander(respLoader, file_name)
                     # 3. CHUNCKING EXPANDER
-                    # chuncking_expander(clean_docs, file_name)
+                    chuncking_expander(clean_docs, file_name)
                 elif respLoader.typeMessage == TypeMessage.ERROR:
                     # otherwise show an error message
                     st.error(respLoader.message, icon="🚨")

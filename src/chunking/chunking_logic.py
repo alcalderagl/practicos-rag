@@ -1,52 +1,49 @@
-from langchain.text_splitter import CharacterTextSplitter
 import os
+import json
+from langchain.text_splitter import CharacterTextSplitter
+from src.commons.models.response_logic import ResponseLogic
+from src.commons.enums.type_message import TypeMessage
+from src.commons.logging_messages import LOGG_MESSAGES
+from src.commons.files_logic import existsFile
 
-
-def chunk_doc(document: str, output_dir="data/chunks"):
+def chuncking_doc(page:str, file_name: str, output_file='data/chunks/chunks.json') -> ResponseLogic:
     """
-    Function to chunk a document and save the chunks as text files.
-
+    Function to chunk a document and save the chunks as a JSON file.
+    
     Parameters:
     - document (str): The text document to chunk.
-    - output_dir (str): The directory where chunk files will be saved.
-
+    - output_file (str): The path to the JSON file where chunks will be saved.
+    
     Returns:
     - List of chunks (str).
     """
+    resp: ResponseLogic
     try:
         # Configure the text splitter
         text_splitter = CharacterTextSplitter(
-            chunk_size=35, chunk_overlap=0, separator=" ", strip_whitespace=True
+            chunk_size=35, chunk_overlap=5, separator=" ", strip_whitespace=True
         )
-
+        
         # Chunk the document
-        chunks = text_splitter.split_text(document)
+        chunks = text_splitter.split_text(page)
+        #Document(metadata={}, page_content='This is the text I would like to ch'),
+
+        # Prepare the data for JSON
+        # chunks_data = [{"chunk_id": i + 1, "content": chunk, "document": path} for i, chunk in enumerate(chunks)]
 
         # Ensure the output directory exists
-        if not os.path.exists(output_dir):
-            os.makedirs(output_dir)
+        
+        # os.makedirs(os.path.dirname(output_file), exist_ok=True)
 
-        # Save each chunk to a separate file
-        for i, chunk in enumerate(chunks):
-            with open(f"{output_dir}/chunk_{i+1}.txt", "w", encoding="utf-8") as file:
-                file.write(chunk)
+        # # Save chunks to a JSON file
+        # with open(output_file, "w", encoding="utf-8") as file:
+        #     json.dump(chunks_data, file, indent=4, ensure_ascii=False)
+        
+        # print(f"Chunks saved successfully to {output_file}.")
+        resp = ResponseLogic(response=chunks, typeMessage=TypeMessage.INFO, message=f"Chunks saved successfully to {output_file}.")
+        return resp
 
-        print(f"Chunks saved successfully in {output_dir}.")
-        return chunks
-
-    except Exception as e:
-        print(f"Error while chunking the document: {e}")
-        return []
-
-
-# Example usage
-if __name__ == "__main__":
-    example_document = """
-    This is a simple example text to demonstrate how chunking works with the LangChain library.
-    Each chunk will have a maximum size of 35 characters. The output will be saved as text files.
-    This ensures the chunks are easy to handle in downstream processes.
-    """
-
-    chunks = chunk_doc(example_document)
-    for i, chunk in enumerate(chunks, 1):
-        print(f"Chunk {i}: {chunk}")
+    except (ValueError, KeyError) as e:
+        resp = ResponseLogic(response=None, typeMessage=TypeMessage.ERROR, message=LOGG_MESSAGES["CHUNCKING_ERROR"].format(error=e))
+        
+    return resp

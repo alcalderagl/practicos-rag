@@ -28,14 +28,14 @@ class VectorStoreManager:
         self._client = QdrantClient(host=self._host, port=self._port)
 
         # Initialize embedding model
-        self._embedding_model = HuggingFaceEmbeddings(model_name=self.model_name)
+        self.embedding_model = HuggingFaceEmbeddings(model_name=self.model_name)
 
         self.create_collection()
 
         self.vector_store = Qdrant(
             client=self._client,
             collection_name=self.collection_name,
-            embeddings=self._embedding_model,
+            embeddings=self.embedding_model,
         )
 
     def create_collection(self) -> ResponseLogic:
@@ -60,7 +60,7 @@ class VectorStoreManager:
             else:
                 self._client.create_collection(
                     collection_name=self.collection_name,
-                    vectors_config=self.vectors_params,
+                    vectors_config=self._vectors_params,
                 )
                 resp = ResponseLogic(
                     response=None,

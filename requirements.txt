@@ -20,3 +20,5 @@ unstructured[local-inference]
 watchdog
 qdrant-client[fastembed]
 langchain_qdrant
+json
+os
