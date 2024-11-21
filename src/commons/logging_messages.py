@@ -19,6 +19,8 @@ LOGG_MESSAGES = {
     "VECTOR_STORE_COLLECTION_CREATION_FAILED": "Failed to create the collection {error}.",
     "VECTOR_STORE_SUCCESS_QDRANT_CONN": "Qdrant is healthy and connected !",
     "VECTOR_STORE_FAILED_QDRANT_CONN": "Failed to connect to Qdrant: {error}.",
-    "VECTOR_STORE_COLLECTION_DELETE_FAILED": "Collection deleted",
-    "VECTOR_STORE_COLLECTION_DELETE_FAILED": "Failed to delete the collection {error}",
+    "VECTOR_STORE_COLLECTION_SUCCESS_DELETED": "Collection deleted",
+    "VECTOR_STORE_COLLECTION_FAILED_DELETED": "Failed to delete the collection {error}",
+    "RETRIEVER_FAILED": "Retriever has failed with the following error: {error}",
+    "RETRIEVER_SUCCESS": "Retriever has return the following documents",
 }
