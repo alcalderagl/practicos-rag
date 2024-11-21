@@ -1,6 +1,6 @@
 import streamlit as st
 from typing import List
-from src.chunking.chunking_logic import chuck_doc
+#from src.chunking.chunking_logic import chuck_doc
 from src.commons.logging_messages import LOGG_MESSAGES
 
 def chuncking_expander(docs: List[str], file_name):
