@@ -6,7 +6,7 @@ uninstall:
 	pip freeze --local | grep -v "^-e" | cut -d = -f 1 | xargs -n 1 pip uninstall -y
 format:
 	# format code
-	black *.py ./src/**/*.py
+	black *.py ./src
 lint:
 	# flake8 or pylint
 	pylint --disable=R,C *.py ./src/**/*.py main_app.py

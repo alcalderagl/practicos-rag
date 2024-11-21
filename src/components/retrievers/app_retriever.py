@@ -7,7 +7,7 @@ st.title("Query Retriever")
 
 if "chat_history" not in st.session_state:
     st.session_state.chat_history = []
-    
+
 user_prompt = st.chat_input("Say something")
 
 if user_prompt:
@@ -41,19 +41,26 @@ st.markdown(
         flex-direction: column;
     }
     </style>
-    """
-    ,
-    unsafe_allow_html=True
+    """,
+    unsafe_allow_html=True,
 )
-    
+
 if st.session_state.chat_history:
     for i, chat in enumerate(st.session_state.chat_history):
-        if chat.role == 'user':
-            st.markdown(f'<div class="chat-container"><div class="user-message">{chat.message}</div></div>', unsafe_allow_html=True)
+        if chat.role == "user":
+            st.markdown(
+                f'<div class="chat-container"><div class="user-message">{chat.message}</div></div>',
+                unsafe_allow_html=True,
+            )
         else:
-            if i == len(st.session_state.chat_history) - 1:
+            if i == len(st.session_state.chat_history) - 1 and chat.message == "...":
                 with st.spinner("..."):
                     time.sleep(5)
-                    bot_response = "Te atiendo cuando pueda" #vector_retriever(user_prompt))
+                    bot_response = (
+                        "Te atiendo cuando pueda"  # vector_retriever(user_prompt))
+                    )
                     chat.message = bot_response
-            st.markdown(f'<div class="chat-container"><div class="bot-message">{chat.message}</div></div>', unsafe_allow_html=True)
+            st.markdown(
+                f'<div class="chat-container"><div class="bot-message">{chat.message}</div></div>',
+                unsafe_allow_html=True,
+            )

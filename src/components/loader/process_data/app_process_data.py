@@ -10,21 +10,23 @@ st.title(LOGG_MESSAGES["APP_LABEL_LOADER_TITLE"])
 # upload files st component
 uploaded_files = st.file_uploader(
     LOGG_MESSAGES["APP_LABEL_CHOOSE_FILES"],
-    type=["pdf"], #"csv", "xlsx", "xls", "docx", "txt"],
+    type=["pdf"],  # "csv", "xlsx", "xls", "docx", "txt"],
     accept_multiple_files=True,
 )
 
 for uploaded_file in uploaded_files:
     if uploaded_file is not None:
         # get file binary data
-        bytes_data:bytes = uploaded_file.read()
+        bytes_data: bytes = uploaded_file.read()
         # get file name
-        file_name:str = uploaded_file.name
+        file_name: str = uploaded_file.name
         # directory path
-        dir_path:str = "data/regulaciones"
+        dir_path: str = "data/regulaciones"
         with st.spinner(LOGG_MESSAGES["APP_LABEL_PROCESSING_FILE"]):
             # store document
-            uploadResp = upload_file(dir_path=dir_path, document=bytes_data, filename=file_name)
+            uploadResp = upload_file(
+                dir_path=dir_path, document=bytes_data, filename=file_name
+            )
             if uploadResp.typeMessage == TypeMessage.INFO and uploadResp.response:
                 # if document was sucessfully stored then
                 # 1. loader process
@@ -34,7 +36,7 @@ for uploaded_file in uploaded_files:
                     # 2. CLEANING EXPANDER
                     clean_docs = cleaning_expander(respLoader, file_name)
                     # 3. CHUNCKING EXPANDER
-                    #chuncking_expander(clean_docs, file_name)
+                    # chuncking_expander(clean_docs, file_name)
                 elif respLoader.typeMessage == TypeMessage.ERROR:
                     # otherwise show an error message
                     st.error(respLoader.message, icon="🚨")

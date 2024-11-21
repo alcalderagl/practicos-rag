@@ -29,9 +29,7 @@ def cleaning_expander(resp_loader: LoaderResponse, file_name: str):
             # expander pages load & clean
             st.title(LOGG_MESSAGES["APP_LABEL_PAGE"].format(no_page=str(index + 1)))
             with st.container():
-                col1, col2 = st.columns(
-                        2, vertical_alignment="top", gap="medium"
-                )
+                col1, col2 = st.columns(2, vertical_alignment="top", gap="medium")
                 with col1:
                     # this column present load document #n_page
                     if index == 0:

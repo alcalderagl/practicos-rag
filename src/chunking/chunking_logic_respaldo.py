@@ -25,5 +25,3 @@ def chuck_doc(document: str):
     # return document_dicts
 
     return "hello"
-
-

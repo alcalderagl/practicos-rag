@@ -8,9 +8,11 @@ class LoaderModel(BaseModel):
     source: str
     page: int
 
+
 class FileModel(BaseModel):
     fileExt: str
     response: List[LoaderModel]
+
 
 class LoaderResponse(BaseModel):
     """
@@ -20,7 +22,3 @@ class LoaderResponse(BaseModel):
     response: FileModel
     typeMessage: TypeMessage
     message: str
-        
-
-    
-    
