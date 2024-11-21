@@ -20,9 +20,6 @@ class LoaderResponse(BaseModel):
     response: FileModel
     typeMessage: TypeMessage
     message: str
-
-    # class Config:
-    #     arbitrary_types_allowed = True
         
 
     
