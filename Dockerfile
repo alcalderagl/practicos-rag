@@ -5,7 +5,7 @@ FROM python:3.11.5-slim
 WORKDIR /app
 
 # Copia los archivos necesarios
-COPY mai_app.py /app/
+COPY main_app.py /app/
 COPY src /app/src/
 COPY requirements.txt /app/
 

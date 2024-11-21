@@ -1,5 +1,5 @@
 import streamlit as st
-from src.commons.files_logic import upload_file, generate_file_path
+from src.commons.files_logic import upload_file
 from src.loaders.loaders_logic import file_loader
 from src.commons.logging_messages import LOGG_MESSAGES
 from src.commons.enums.type_message import TypeMessage
@@ -28,7 +28,7 @@ for uploaded_file in uploaded_files:
             if uploadResp.typeMessage == TypeMessage.INFO and uploadResp.response:
                 # if document was sucessfully stored then
                 # 1. loader process
-                respLoader =     file_loader(uploadResp.response, file_name)
+                respLoader = file_loader(uploadResp.response, file_name)
                 # show a message depending on type message response loader
                 if respLoader.typeMessage == TypeMessage.INFO:
                     # 2. CLEANING EXPANDER

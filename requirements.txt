@@ -5,8 +5,8 @@ black==24.10.0
 fire==0.7.0
 fastapi==0.115.4
 uvicorn==0.32.0
-spacy==3.7.5
-es_core_news_sm
+spacy==2.3.9
+es_core_news_sm==2.3.1
 langchain-community
 #langchain==0.3.7
 #langchain-core==0.3.17
@@ -18,3 +18,5 @@ pi_heif
 unstructured
 unstructured[local-inference]
 watchdog
+qdrant-client[fastembed]
+langchain_qdrant
