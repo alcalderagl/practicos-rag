@@ -2,17 +2,15 @@ import os
 from qdrant_client import QdrantClient
 from qdrant_client.http.models import VectorParams, Distance
 from langchain_community.embeddings import HuggingFaceEmbeddings
-from langchain.vectorstores import Qdrant
+from langchain_community.vectorstores import Qdrant
 from src.commons.enums.type_message import TypeMessage
 from src.commons.logging_messages import LOGG_MESSAGES
 from src.commons.models.response_logic import ResponseLogic
 
 
 class VectorStoreManager:
-
     def __init__(self):
-
-        self.collection_name = os.getenv("VECTOR_STORE_NAME", "default_collection")
+        self.collection_name = os.getenv("VECTOR_STORE_NAME", "regulaciones_mx")
         self._port = os.getenv("QDRANT_PORT", "6333")
         self.model_name = os.getenv(
             "MODEL_EMBEDDING", "sentence-transformers/all-MiniLM-L6-v2"
@@ -49,7 +47,7 @@ class VectorStoreManager:
         """
         resp: ResponseLogic
         try:
-            if self.validate_collection(self.collection_name):
+            if self.validate_collection():
                 resp = ResponseLogic(
                     response=None,
                     typeMessage=TypeMessage.WARNING,

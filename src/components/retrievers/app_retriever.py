@@ -2,6 +2,7 @@ import streamlit as st
 from src.commons.models.chat_retriever.chat_history import ChatHistory
 from src.retrievers.retrievers_logic import vector_retriever
 import time
+from src.commons.enums.type_message import TypeMessage
 
 st.title("Query Retriever")
 
@@ -56,10 +57,11 @@ if st.session_state.chat_history:
             if i == len(st.session_state.chat_history) - 1 and chat.message == "...":
                 with st.spinner("..."):
                     time.sleep(5)
-                    bot_response = (
-                        "Te atiendo cuando pueda"  # vector_retriever(user_prompt))
-                    )
-                    chat.message = bot_response
+                    bot_response = vector_retriever(user_prompt)
+                    if bot_response.typeMessage == TypeMessage.INFO:
+                        chat.message = bot_response
+                    else:
+                        chat.message = bot_response.message
             st.markdown(
                 f'<div class="chat-container"><div class="bot-message">{chat.message}</div></div>',
                 unsafe_allow_html=True,

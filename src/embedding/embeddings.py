@@ -7,15 +7,18 @@ import os
 import pickle
 from src.vector_store_client.vector_store_client_logic import VectorStoreManager
 
+
 def embeddings_logic(chuncks, file_name: str):
-    
+
     vectorStoreManager = VectorStoreManager()
 
     print("Qdrant Client instalado correctamente.")
 
     # Conectar con Qdrant (debe estar en ejecución)
     try:
-        client = QdrantClient(host="localhost", port=6333)  # Cambiar host/puerto si es necesario
+        client = QdrantClient(
+            host="localhost", port=6333
+        )  # Cambiar host/puerto si es necesario
         print("Conectado a Qdrant correctamente.")
     except Exception as e:
         print(f"Error al conectar con Qdrant: {e}")
@@ -28,7 +31,7 @@ def embeddings_logic(chuncks, file_name: str):
         if not any(col.name == collection_name for col in collections):
             client.create_collection(
                 collection_name=collection_name,
-                vectors_config=VectorParams(size=384, distance=Distance.COSINE)
+                vectors_config=VectorParams(size=384, distance=Distance.COSINE),
             )
             print(f"Colección '{collection_name}' creada.")
         else:
@@ -59,7 +62,6 @@ def embeddings_logic(chuncks, file_name: str):
     #     print(f"Error al cargar el modelo de embeddings: {e}")
     #     exit()
 
-   
     # Generar los embeddings para los fragmentos
     try:
         texts = [doc.page_content for doc in chuncks]
@@ -72,7 +74,7 @@ def embeddings_logic(chuncks, file_name: str):
     # Cargar los embeddings en Qdrant
     try:
         qdrant = Qdrant(client=client, collection_name=collection_name)
-        #vectorStoreManager.vector_store.add_texts()
+        # vectorStoreManager.vector_store.add_texts()
         qdrant.add_texts(texts=texts, embeddings=embeddings)
         print("Embeddings cargados en Qdrant correctamente.")
     except Exception as e:
@@ -80,7 +82,9 @@ def embeddings_logic(chuncks, file_name: str):
         exit()
 
     # Guardar los embeddings en un archivo .pkl dentro de la carpeta "embeddings"
-    os.makedirs("embeddings", exist_ok=True)  # Crear la carpeta "embeddings" si no existe
+    os.makedirs(
+        "embeddings", exist_ok=True
+    )  # Crear la carpeta "embeddings" si no existe
     embeddings_file_path = "embeddings/embeddings.pkl"
 
     try:
@@ -96,9 +100,7 @@ def embeddings_logic(chuncks, file_name: str):
     try:
         query_embedding = embedding_model.embed([query])[0]
         results = client.search(
-            collection_name=collection_name,
-            query_vector=query_embedding,
-            limit=5
+            collection_name=collection_name, query_vector=query_embedding, limit=5
         )
         print("Resultados de la consulta:")
         for result in results:

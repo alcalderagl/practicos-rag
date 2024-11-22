@@ -1,6 +1,5 @@
 install:
 	# install commands
-	pip install --upgrade pip &&\
 	pip install -r requirements.txt
 uninstall:
 	pip freeze --local | grep -v "^-e" | cut -d = -f 1 | xargs -n 1 pip uninstall -y
