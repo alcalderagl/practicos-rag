@@ -125,9 +125,9 @@ class VectorStoreManager:
         bool
             Returns `True` if the collection exists, otherwise `False`.
         """
-        if self.collection_name in [
-            collection for collection in self.get_qdrant_collections()
-        ]:
+        if any (
+            self.collection_name == collection for collection in self.get_qdrant_collections()
+        ):
             return True
         else:
             return False
