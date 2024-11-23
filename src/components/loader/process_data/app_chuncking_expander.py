@@ -9,7 +9,7 @@ def chuncking_expander(
     pagesCleaned: List[str],
     file_name: str,
     output_file: str = "data/chunks/chunks.json",
-):
+) -> ResponseLogic:
     """
     Function to chunk a document and save the chunks as a JSON file.
 
@@ -46,3 +46,5 @@ def chuncking_expander(
         st.success(
             f"The document '{file_name}' has been successfully saved to {output_file}."
         )
+
+        return chuncks

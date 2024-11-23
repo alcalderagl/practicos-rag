@@ -25,11 +25,15 @@ if uploaded_file:
 
             loader = PyPDFLoader(uploaded_file)
             chunks = loader.load_and_split()
-            st.success(f"Documento cargado correctamente. Total de fragmentos: {len(chunks)}")
+            st.success(
+                f"Documento cargado correctamente. Total de fragmentos: {len(chunks)}"
+            )
 
             # Generar embeddings
             with st.spinner("Generando embeddings..."):
-                response = vectorStoreManager.set_embeddings([chunk.page_content for chunk in chunks])
+                response = vectorStoreManager.set_embeddings(
+                    [chunk.page_content for chunk in chunks]
+                )
                 if response.typeMessage == TypeMessage.INFO:
                     embeddings = response.response
                     vectorStoreManager.store_embeddings(embeddings, chunks)
