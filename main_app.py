@@ -7,8 +7,8 @@ pages = {
             title="Load and process data",
         )
     ],
-    "vector query": [
-        st.Page("src/components/retrievers/app_retriever.py", title="Retriever")
+    "Embeddings": [
+        st.Page("src/components/retrievers/app_embeddings.py", title="Vector search")
     ],
 }
 
