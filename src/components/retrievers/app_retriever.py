@@ -1,21 +1,53 @@
 import streamlit as st
 from src.commons.models.chat_retriever.chat_history import ChatHistory
 from src.retrievers.retrievers_logic import vector_retriever
-import time
+from src.vector_store_client.vector_store_client_logic import VectorStoreManager
 from src.commons.enums.type_message import TypeMessage
+import time
 
+# Inicializar VectorStoreManager
+vectorStoreManager = VectorStoreManager()
+
+# Título de la aplicación
 st.title("Query Retriever")
 
+# Inicializar chat history si no está en el estado
 if "chat_history" not in st.session_state:
     st.session_state.chat_history = []
 
-user_prompt = st.chat_input("Say something")
+# Funcionalidad para cargar documentos
+uploaded_file = st.file_uploader("Cargar documento (PDF)", type=["pdf"])
+if uploaded_file:
+    with st.spinner("Procesando el documento..."):
+        try:
+            # Cargar y dividir el documento en fragmentos (chunks)
+            from langchain.document_loaders import PyPDFLoader
 
+            loader = PyPDFLoader(uploaded_file)
+            chunks = loader.load_and_split()
+            st.success(f"Documento cargado correctamente. Total de fragmentos: {len(chunks)}")
+
+            # Generar embeddings
+            with st.spinner("Generando embeddings..."):
+                response = vectorStoreManager.set_embeddings([chunk.page_content for chunk in chunks])
+                if response.typeMessage == TypeMessage.INFO:
+                    embeddings = response.response
+                    vectorStoreManager.store_embeddings(embeddings, chunks)
+                    st.success("Embeddings generados y almacenados en Qdrant.")
+                else:
+                    st.error(response.message)
+        except Exception as e:
+            st.error(f"Error al procesar el documento: {e}")
+
+# Entrada del usuario para consultas
+user_prompt = st.chat_input("Escribe tu consulta")
+
+# Procesar la consulta del usuario
 if user_prompt:
-    # prompt user
     st.session_state.chat_history.append(ChatHistory(role="user", message=user_prompt))
     st.session_state.chat_history.append(ChatHistory(role="bot", message="..."))
 
+# Estilo para los mensajes del chat
 st.markdown(
     """
     <style>
@@ -46,6 +78,7 @@ st.markdown(
     unsafe_allow_html=True,
 )
 
+# Mostrar el historial del chat
 if st.session_state.chat_history:
     for i, chat in enumerate(st.session_state.chat_history):
         if chat.role == "user":
@@ -59,7 +92,7 @@ if st.session_state.chat_history:
                     time.sleep(5)
                     bot_response = vector_retriever(user_prompt)
                     if bot_response.typeMessage == TypeMessage.INFO:
-                        chat.message = bot_response
+                        chat.message = bot_response.response
                     else:
                         chat.message = bot_response.message
             st.markdown(
