@@ -47,15 +47,15 @@ class VectorStoreManager:
         """
         resp: ResponseLogic
         try:
-            if self.validate_collection():
-                resp = ResponseLogic(
-                    response=None,
-                    typeMessage=TypeMessage.WARNING,
-                    message=LOGG_MESSAGES["VECTOR_STORE_COLLECTION_EXISTS"].format(
-                        collection_name=self.collection_name
-                    ),
-                )
-            else:
+            # get collection name from qdrant vector store
+            existing_collections = [
+                collection.name
+                for collection in self._client.get_collections().collections
+            ]
+            print("Colecciones existentes:", existing_collections)
+
+            if self.collection_name not in existing_collections:
+                # Create collection when it doesn't exist
                 self._client.create_collection(
                     collection_name=self.collection_name,
                     vectors_config=self._vectors_params,
@@ -64,6 +64,15 @@ class VectorStoreManager:
                     response=None,
                     typeMessage=TypeMessage.INFO,
                     message=LOGG_MESSAGES["VECTOR_STORE_COLLECTION_CREATED"].format(
+                        collection_name=self.collection_name
+                    ),
+                )
+            else:
+                # collection exists
+                resp = ResponseLogic(
+                    response=None,
+                    typeMessage=TypeMessage.WARNING,
+                    message=LOGG_MESSAGES["VECTOR_STORE_COLLECTION_EXISTS"].format(
                         collection_name=self.collection_name
                     ),
                 )
@@ -115,22 +124,6 @@ class VectorStoreManager:
         """
         qdrant_collections = self._client.get_collections().collections
         return qdrant_collections
-
-    def validate_collection(self) -> bool:
-        """
-        Validates if collection exists in qdrant store
-
-        Returns
-        -------
-        bool
-            Returns `True` if the collection exists, otherwise `False`.
-        """
-        if any (
-            self.collection_name == collection for collection in self.get_qdrant_collections()
-        ):
-            return True
-        else:
-            return False
 
     def delete_qdrant_collection(self) -> ResponseLogic:
         """

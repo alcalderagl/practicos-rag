@@ -38,7 +38,9 @@ def store_qdrant_embeddings(embeddings, chuncks):
 
 def save_embeddings(embeddings, file_name):
     """Guardar los embeddings en un archivo local."""
-    os.makedirs("embeddings", exist_ok=True)  # Crear la carpeta "embeddings" si no existe
+    os.makedirs(
+        "embeddings", exist_ok=True
+    )  # Crear la carpeta "embeddings" si no existe
     embeddings_file_path = f"embeddings/{file_name}_embeddings.pkl"
 
     try:
@@ -89,7 +91,7 @@ if __name__ == "__main__":
     example_chuncks = [
         "Fragmento 1 del documento.",
         "Fragmento 2 del documento.",
-        "Fragmento 3 del documento."
+        "Fragmento 3 del documento.",
     ]
 
     # Nombre del archivo para guardar embeddings

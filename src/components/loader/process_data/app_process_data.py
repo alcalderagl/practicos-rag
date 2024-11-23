@@ -5,6 +5,7 @@ from src.commons.logging_messages import LOGG_MESSAGES
 from src.commons.enums.type_message import TypeMessage
 from src.components.loader.process_data.app_cleanin_expander import cleaning_expander
 from src.components.loader.process_data.app_chuncking_expander import chuncking_expander
+from src.embedding.embeddings import set_embeddings
 
 st.title(LOGG_MESSAGES["APP_LABEL_LOADER_TITLE"])
 # upload files st component
@@ -36,7 +37,9 @@ for uploaded_file in uploaded_files:
                     # 2. CLEANING EXPANDER
                     clean_docs = cleaning_expander(respLoader, file_name)
                     # 3. CHUNCKING EXPANDER
-                    chuncking_expander(clean_docs, file_name)
+                    chuncks = chuncking_expander(clean_docs, file_name)
+                    # 4. EMBEDDINGS
+                    resp_embeddings = set_embeddings(chuncks=chuncks.response)
                 elif respLoader.typeMessage == TypeMessage.ERROR:
                     # otherwise show an error message
                     st.error(respLoader.message, icon="🚨")
