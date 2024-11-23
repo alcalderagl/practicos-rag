@@ -8,7 +8,7 @@ pages = {
         )
     ],
     "Embeddings": [
-        st.Page("src/components/retrievers/app_embeddings.py", title="Vector search")
+        st.Page("src/components/embeddings/app_embeddings.py", title="Vector search")
     ],
 }
 
