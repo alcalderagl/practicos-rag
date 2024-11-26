@@ -1,5 +1,5 @@
 # Usa una imagen base de Python
-FROM python:3.11.5-slim
+FROM python:3.11-slim
 
 # Establece el directorio de trabajo
 WORKDIR /app
@@ -10,7 +10,7 @@ COPY src /app/src/
 COPY requirements.txt /app/
 
 # Instala las dependencias
-RUN pip install --no-cache-dir -r requirements.txt
+RUN pip install --no-cache-dir --upgrade pip && pip install --no-cache-dir -r requirements.txt
 
 # Expone el puerto de la app de Streamlit
 EXPOSE 8501

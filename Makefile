@@ -16,20 +16,17 @@ deploy:
 	#deploy
 all: install lint test deploy
 
-# Variables
-COMPOSE_FILE = docker-compose.yml
-
 # commands
 compose-up:
-	docker-compose -f $(COMPOSE_FILE) up --build -d
+	docker compose -f docker-compose.yml up --build -d
 compose-down:
-	docker-compose -f $(COMPOSE_FILE) down
+	docker compose -f docker-compose.yml down
 compose-logs:
-	docker-compose -f $(COMPOSE_FILE) logs -f
+	docker compose -f docker-compose.yml logs -f
 compose-restart:
-	docker-compose -f $(COMPOSE_FILE) down && docker-compose -f $(COMPOSE_FILE) up --build -d
+	docker compose -f docker-compose.yml down && docker compose -f docker-compose.yml up --build -d
 compose-clean:
-	docker-compose -f $(COMPOSE_FILE) down -v
+	docker compose -f docker-compose.yml down -v
 
 help:
 	@echo "Comandos disponibles:"
