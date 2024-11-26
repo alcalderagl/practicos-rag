@@ -9,39 +9,11 @@ import time
 vectorStoreManager = VectorStoreManager()
 
 # Título de la aplicación
-st.title("Query Retriever")
+st.title("Vector query")
 
 # Inicializar chat history si no está en el estado
 if "chat_history" not in st.session_state:
     st.session_state.chat_history = []
-
-# Funcionalidad para cargar documentos
-uploaded_file = st.file_uploader("Cargar documento (PDF)", type=["pdf"])
-if uploaded_file:
-    with st.spinner("Procesando el documento..."):
-        try:
-            # Cargar y dividir el documento en fragmentos (chunks)
-            from langchain.document_loaders import PyPDFLoader
-
-            loader = PyPDFLoader(uploaded_file)
-            chunks = loader.load_and_split()
-            st.success(
-                f"Documento cargado correctamente. Total de fragmentos: {len(chunks)}"
-            )
-
-            # Generar embeddings
-            with st.spinner("Generando embeddings..."):
-                response = vectorStoreManager.set_embeddings(
-                    [chunk.page_content for chunk in chunks]
-                )
-                if response.typeMessage == TypeMessage.INFO:
-                    embeddings = response.response
-                    vectorStoreManager.store_embeddings(embeddings, chunks)
-                    st.success("Embeddings generados y almacenados en Qdrant.")
-                else:
-                    st.error(response.message)
-        except Exception as e:
-            st.error(f"Error al procesar el documento: {e}")
 
 # Entrada del usuario para consultas
 user_prompt = st.chat_input("Escribe tu consulta")
