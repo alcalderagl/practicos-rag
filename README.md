@@ -26,9 +26,36 @@ To get started with the course:
     ```bash
     streamlit run main_app.py
 
-
 ## Docker installation
 
+---
+
+## Prerequisites
+
+- [Docker](https://www.docker.com/products/docker-desktop) installed on your machine.
+- (Optional) [Docker Compose](https://docs.docker.com/compose/) if using a `docker-compose.yml`.
+- [Make](https://www.gnu.org/software/make/) installed (usually pre-installed on Linux/macOS, available via Chocolatey or WSL on Windows).
+
+---
+
+1. Use the following command to build and start the application:
+    ```bash
+    make compose-up
+2. To view real-time logs from the running services:
+    ```bash
+    make compose-logs
+3. To rebuild and restart the services:
+    ```bash
+    make compose-restart
+4. To stop the services and remove containers:
+    ```bash
+    make compose-down
+5. To stop the services and remove containers:
+    ```bash
+    make compose-down
+6. To stop the services, remove containers, and delete associated volumes (fresh start):
+    ```bash
+    make compose-clean
 
 ## Integration changes
 
