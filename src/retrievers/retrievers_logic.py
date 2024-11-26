@@ -1,4 +1,3 @@
-import os
 from src.vector_store_client.vector_store_client_logic import VectorStoreManager
 from src.commons.logging_messages import LOGG_MESSAGES
 from src.commons.models.response_logic import ResponseLogic

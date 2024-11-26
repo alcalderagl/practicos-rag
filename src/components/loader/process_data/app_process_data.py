@@ -41,7 +41,9 @@ for uploaded_file in uploaded_files:
                     chuncks = chuncking_expander(clean_docs, file_name)
                     # 4. EMBEDDINGS
                     embeddings = embeddingManager.set_embeddings(texts=chuncks.response)
-                    embeddingManager.store_embeddings_in_qdrant(texts=chuncks.response, embeddings=embeddings)
+                    embeddingManager.store_embeddings_in_qdrant(
+                        texts=chuncks.response, embeddings=embeddings
+                    )
                     st.write(embeddings)
                 elif respLoader.typeMessage == TypeMessage.ERROR:
                     # otherwise show an error message
