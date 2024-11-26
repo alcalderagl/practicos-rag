@@ -38,7 +38,7 @@ class VectorStoreManager:
 
         # create vector store
         self.vector_store = Qdrant(
-            client=self._client,
+            client=self.client,
             collection_name=self.collection_name,
             embeddings=self.embedding_model,
         )
