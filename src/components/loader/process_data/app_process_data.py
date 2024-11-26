@@ -44,7 +44,6 @@ for uploaded_file in uploaded_files:
                     embeddingManager.store_embeddings_in_qdrant(
                         texts=chuncks.response, embeddings=embeddings
                     )
-                    st.write(embeddings)
                 elif respLoader.typeMessage == TypeMessage.ERROR:
                     # otherwise show an error message
                     st.error(respLoader.message, icon="🚨")
