@@ -1,6 +1,6 @@
 import streamlit as st
 from src.commons.models.chat_retriever.chat_history import ChatHistory
-from src.retrievers.retrievers_logic import vector_retriever
+from src.embedding.embeddings_logic import EmbeddingManager
 from src.commons.enums.type_message import TypeMessage
 
 # Título de la aplicación
@@ -51,6 +51,7 @@ st.markdown(
 
 # Mostrar el historial del chat
 if st.session_state.chat_history:
+    embedding = EmbeddingManager()
     for i, chat in enumerate(st.session_state.chat_history):
         if chat.role == "user":
             st.markdown(
@@ -58,11 +59,17 @@ if st.session_state.chat_history:
                 unsafe_allow_html=True,
             )
         else:
+
             if i == len(st.session_state.chat_history) - 1 and chat.message == "...":
                 with st.spinner("..."):
-                    bot_response = vector_retriever(user_prompt)
+                    bot_response = embedding.query_qdrant(
+                        query_text=user_prompt, top_k=10
+                    )
                     if bot_response.typeMessage == TypeMessage.INFO:
-                        chat.message = bot_response.response
+                        # responses = [resp for resp in bot_response.response]
+                        chat.message = (
+                            bot_response.response
+                        )  #'These are the similarities to your query ' + ' '.join(responses)
                     else:
                         chat.message = bot_response.message
             st.markdown(
