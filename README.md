@@ -26,6 +26,10 @@ To get started with the course:
     ```bash
     streamlit run main_app.py
 
+
+## Docker installation
+
+
 ## Integration changes
 
 Before add files to head it is necessary to
