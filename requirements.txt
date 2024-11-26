@@ -30,3 +30,5 @@ qdrant-client[fastembed]==1.12.1
 # json
 # os
 torch --pre --index-url https://download.pytorch.org/whl/nightly/cpu/torch_nightly.html
+#langchain-huggingface>=0.2.2
+langchain-huggingface

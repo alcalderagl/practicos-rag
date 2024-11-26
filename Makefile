@@ -20,13 +20,13 @@ all: install lint test deploy
 compose-up:
 	docker compose -f docker-compose.yml up --build -d
 compose-down:
-	docker-compose -f docker-compose.yml down
+	docker compose -f docker-compose.yml down
 compose-logs:
-	docker-compose -f docker-compose.yml logs -f
+	docker compose -f docker-compose.yml logs -f
 compose-restart:
-	docker-compose -f docker-compose.yml down && docker-compose -f docker-compose.yml up --build -d
+	docker compose -f docker-compose.yml down && docker compose -f docker-compose.yml up --build -d
 compose-clean:
-	docker-compose -f docker-compose.yml down -v
+	docker compose -f docker-compose.yml down -v
 
 help:
 	@echo "Comandos disponibles:"
