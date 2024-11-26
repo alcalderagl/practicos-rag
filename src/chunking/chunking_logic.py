@@ -25,7 +25,7 @@ def chuncking_doc(
     try:
         # Configure the text splitter
         text_splitter = CharacterTextSplitter(
-            chunk_size=35, chunk_overlap=5, separator=" ", strip_whitespace=True
+            chunk_size=200, chunk_overlap=50, separator=" ", strip_whitespace=True
         )
 
         # Chunk the page text
