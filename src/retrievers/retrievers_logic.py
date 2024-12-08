@@ -17,13 +17,13 @@ def vector_retriever(
         docs = retriever.invoke(question)
         resp = ResponseLogic(
             response=docs,
-            typeMessage=TypeMessage.ERROR,
+            type_message=TypeMessage.ERROR,
             message=LOGG_MESSAGES["RETRIEVER_SUCCESS"],
         )
     except (ValueError, KeyError) as e:
         resp = ResponseLogic(
             response=None,
-            typeMessage=TypeMessage.ERROR,
+            type_message=TypeMessage.ERROR,
             message=LOGG_MESSAGES["RETRIEVER_FAILED"].format(error=e),
         )
     return resp

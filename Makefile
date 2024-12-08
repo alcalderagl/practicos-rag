@@ -1,6 +1,9 @@
 install:
 	# install commands
 	pip install -r requirements.txt
+
+start:
+	streamlit run main_app.py
 uninstall:
 	pip freeze --local | grep -v "^-e" | cut -d = -f 1 | xargs -n 1 pip uninstall -y
 format:

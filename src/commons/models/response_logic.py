@@ -4,11 +4,17 @@ from src.commons.enums import type_message
 
 class ResponseLogic(BaseModel):
     """
-    Response model to streamlit app
+    Response
     """
 
     response: any
-    typeMessage: type_message
+    """
+    Type of message
+    """
+    type_message: type_message
+    """
+    Message
+    """
     message: str
 
     class Config:

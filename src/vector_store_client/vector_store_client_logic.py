@@ -1,4 +1,5 @@
 import os
+import logging
 from qdrant_client import QdrantClient
 from qdrant_client.http.models import VectorParams, Distance
 from langchain.embeddings import HuggingFaceEmbeddings
@@ -6,6 +7,8 @@ from langchain_community.vectorstores import Qdrant
 from src.commons.enums.type_message import TypeMessage
 from src.commons.logging_messages import LOGG_MESSAGES
 from src.commons.models.response_logic import ResponseLogic
+
+logging.basicConfig(level=logging.INFO)
 
 
 class VectorStoreManager:
@@ -16,12 +19,12 @@ class VectorStoreManager:
         self._port = os.getenv("QDRANT_PORT", "6333")
         # getting or setting model embedding
         self.model_name = os.getenv(
-            "MODEL_EMBEDDING", "sentence-transformers/all-MiniLM-L6-v2"
+            "MODEL_EMBEDDING", "distiluse-base-multilingual-cased-v2"
         )
         # getting or setting qdrant host
         self._host = os.getenv("QDRANT_HOST", "localhost")
         # getting or setting model embedding size
-        self.vector_size = os.getenv("VECTOR_SIZE", "384")
+        self.vector_size = os.getenv("VECTOR_SIZE", "512")
         # setting vector params
         self._vectors_params = VectorParams(
             size=self.vector_size, distance=Distance.COSINE
@@ -69,7 +72,7 @@ class VectorStoreManager:
                 )
                 resp = ResponseLogic(
                     response=None,
-                    typeMessage=TypeMessage.INFO,
+                    type_message=TypeMessage.INFO,
                     message=LOGG_MESSAGES["VECTOR_STORE_COLLECTION_CREATED"].format(
                         collection_name=self.collection_name
                     ),
@@ -78,7 +81,7 @@ class VectorStoreManager:
                 # collection exists
                 resp = ResponseLogic(
                     response=None,
-                    typeMessage=TypeMessage.WARNING,
+                    type_message=TypeMessage.WARNING,
                     message=LOGG_MESSAGES["VECTOR_STORE_COLLECTION_EXISTS"].format(
                         collection_name=self.collection_name
                     ),
@@ -86,11 +89,13 @@ class VectorStoreManager:
         except (ValueError, KeyError) as e:
             resp = ResponseLogic(
                 response=None,
-                typeMessage=TypeMessage.ERROR,
+                type_message=TypeMessage.ERROR,
                 message=LOGG_MESSAGES["VECTOR_STORE_COLLECTION_CREATION_FAILED"].format(
                     error=e
                 ),
             )
+        # print into console
+        logging.info(resp)
         return resp
 
     def test_qdrant_connection(self):
@@ -107,17 +112,19 @@ class VectorStoreManager:
             client_conn = self.client.info()
             resp = ResponseLogic(
                 response=client_conn,
-                typeMessage=TypeMessage.INFO,
+                type_message=TypeMessage.INFO,
                 message=LOGG_MESSAGES["VECTOR_STORE_SUCCESS_QDRANT_CONN"],
             )
         except (ValueError, KeyError) as e:
             resp = ResponseLogic(
                 response=None,
-                typeMessage=TypeMessage.ERROR,
+                type_message=TypeMessage.ERROR,
                 message=LOGG_MESSAGES["VECTOR_STORE_FAILED_QDRANT_CONN"].format(
                     error=e
                 ),
             )
+        # print into console
+        logging.info(resp)
         return resp
 
     def delete_qdrant_collection(self) -> ResponseLogic:
@@ -134,15 +141,17 @@ class VectorStoreManager:
             self.client.delete_collection(collection_name=self.collection_name)
             resp = ResponseLogic(
                 response=None,
-                typeMessage=TypeMessage.INFO,
+                type_message=TypeMessage.INFO,
                 message=LOGG_MESSAGES["VECTOR_STORE_COLLECTION_SUCCESS_DELETED"],
             )
         except (ValueError, KeyError) as e:
             resp = ResponseLogic(
                 response=None,
-                typeMessage=TypeMessage.ERROR,
+                type_message=TypeMessage.ERROR,
                 message=LOGG_MESSAGES["VECTOR_STORE_COLLECTION_FAILED_DELETED"].format(
                     error=e
                 ),
             )
+        # print into console
+        logging.info(resp)
         return resp

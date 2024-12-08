@@ -3,7 +3,7 @@ import streamlit as st
 pages = {
     "Load files and process data": [
         st.Page(
-            "src/components/loader/process_data/app_process_data.py",
+            "src/components/loader/app_process_data.py",
             title="Load and process data",
         )
     ],

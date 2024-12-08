@@ -3,15 +3,26 @@ from pydantic import BaseModel
 from src.commons.enums.type_message import TypeMessage
 
 
-class LoaderModel(BaseModel):
-    pageContent: str
-    source: str
+class Metadata(BaseModel):
+    author: str
+    title: str
+    creation_date: str
     page: int
+    source: str
+
+
+class LoaderModel(BaseModel):
+    page_content: str
+    metadata: Metadata
+
+    class Config:
+        arbitrary_types_allowed = True
 
 
 class FileModel(BaseModel):
-    fileExt: str
-    response: List[LoaderModel]
+    file_ext: str
+    file_name: str
+    loader: List[LoaderModel]
 
 
 class LoaderResponse(BaseModel):
@@ -20,5 +31,5 @@ class LoaderResponse(BaseModel):
     """
 
     response: FileModel
-    typeMessage: TypeMessage
+    type_message: TypeMessage
     message: str

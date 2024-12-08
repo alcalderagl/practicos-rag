@@ -5,7 +5,7 @@ from src.commons.enums.type_message import TypeMessage
 
 # Título de la aplicación
 st.title("Vector query")
-
+embedding = EmbeddingManager()
 # Inicializar chat history si no está en el estado
 if "chat_history" not in st.session_state:
     st.session_state.chat_history = []
@@ -51,7 +51,6 @@ st.markdown(
 
 # Mostrar el historial del chat
 if st.session_state.chat_history:
-    embedding = EmbeddingManager()
     for i, chat in enumerate(st.session_state.chat_history):
         if chat.role == "user":
             st.markdown(
@@ -59,17 +58,20 @@ if st.session_state.chat_history:
                 unsafe_allow_html=True,
             )
         else:
-
             if i == len(st.session_state.chat_history) - 1 and chat.message == "...":
                 with st.spinner("..."):
                     bot_response = embedding.query_qdrant(
-                        query_text=user_prompt, top_k=10
+                        query_text=user_prompt, top_k=5
                     )
-                    if bot_response.typeMessage == TypeMessage.INFO:
+                    if bot_response.type_message == TypeMessage.INFO:
                         # responses = [resp for resp in bot_response.response]
-                        chat.message = (
-                            bot_response.response
-                        )  #'These are the similarities to your query ' + ' '.join(responses)
+                        best_resp = []
+                        for resp in bot_response.response:
+                            best_resp.append(f"{resp.score} -> {resp.payload['text']}")
+                            # print(resp.score, resp.payload['text'])
+                        chat.message = "\n".join(best_resp)
+
+                        #'These are the similarities to your query ' + ' '.join(responses)
                     else:
                         chat.message = bot_response.message
             st.markdown(
