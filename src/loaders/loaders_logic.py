@@ -1,12 +1,12 @@
 from src.commons.logging_messages import LOGG_MESSAGES
 from .pdf_loader_logic import PDFLoader
-from src.commons.models.loaders.loader_response import FileModel, LoaderResponse
+from src.commons.models.loaders.loader_response import File, LoaderResponse
 from src.commons.enums.type_message import TypeMessage
 from src.commons.files_logic import FileManager
 
 
 class LoaderManager:
-    def __init__(self, dir_path: str, file_name: str):
+    def __init__(self, dir_path: str, file_name: str) -> None:
         """
         Load document into a langchain LOADER document
 
@@ -42,7 +42,7 @@ class LoaderManager:
                 # get file method respect to its file extension
                 loader_response = loader_files[file_ext](self.dir_path)
                 # create an instance of FileModel
-                file_resp = FileModel(
+                file_resp = File(
                     file_ext=file_ext, loader=loader_response, file_name=self.file_name
                 )
                 # defining the log message output
@@ -60,9 +60,7 @@ class LoaderManager:
                 response = LoaderResponse(
                     message=message,
                     type_message=TypeMessage.ERROR,
-                    response=FileModel(
-                        file_ext="", loader=[], file_name=self.file_name
-                    ),
+                    response=File(file_ext="", loader=[], file_name=self.file_name),
                 )
         else:
             # unsopported file extension

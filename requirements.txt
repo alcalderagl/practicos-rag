@@ -36,3 +36,4 @@ PyPDF2
 ragas
 #textblob
 language_tool_python
+flake8

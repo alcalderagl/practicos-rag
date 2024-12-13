@@ -1,7 +1,6 @@
 install:
 	# install commands
 	pip install -r requirements.txt
-
 start:
 	streamlit run main_app.py
 uninstall:
@@ -12,6 +11,8 @@ format:
 lint:
 	# flake8 or pylint
 	pylint --disable=R,C *.py ./src/**/*.py main_app.py
+flake:
+	flake8 ./src/**/*.py main_app.py
 test:
 	#test
 	python -m pytest -vv --cov=mylib test_logic.py

@@ -5,6 +5,7 @@ LOGG_MESSAGES = {
     "LOADER_ERROR_LOADING": "Error while loading the document {error}.",
     "LOADER_UNKNOWN_FILE": 'The document "{file_name}" with extension {ext} is not supported.',
     "CHUNKING_ERROR": "Error while chunking the document: {error}",
+    "CHUNKING_SAVE_JSON": "Error while saving chunking file: {error}",
     "APP_LABEL_LOADER_TITLE": "Load and process documents",
     "APP_LABEL_CHOOSE_FILES": "Choose files",
     "APP_LABEL_PROCESSING_FILE": "Processing file ...",
@@ -26,5 +27,6 @@ LOGG_MESSAGES = {
     "VECTOR_STORE_COLLECTION_FAILED_DELETED": "Failed to delete the collection {error}",
     "RETRIEVER_FAILED": "Retriever has failed with the following error: {error}",
     "RETRIEVER_SUCCESS": "Retriever has return the following documents",
-    "OK": "OK"
+    "OK": "OK",
+    "EMBEDDING_SAVE_JSON": "Error while saving embedging file: {error}",
 }

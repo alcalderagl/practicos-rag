@@ -10,7 +10,7 @@ import language_tool_python
 
 class ProcessDocument:
 
-    def __init__(self):
+    def __init__(self) -> None:
         # if you have more computational ressources use es_core_news_lg or es_dep_news_trf
         self.nlp = spacy.load("es_core_news_sm")
         self.stopwords = list(spacy.lang.es.stop_words.STOP_WORDS)
@@ -27,7 +27,7 @@ class ProcessDocument:
         Returns
         -------
         list[TokenInfo]
-        Returns a list of document tokens
+            Returns a list of document tokens
         """
         # to lowercase document
         document = document.lower()
@@ -69,7 +69,7 @@ class ProcessDocument:
         Returns
         -------
         list[str]
-        Returns a list of keywords.
+            Returns a list of keywords.
         """
         # Initialize TF-IDF vectorizer with spanish stop_words
         vectorizer = TfidfVectorizer(stop_words=self.stopwords)
@@ -86,7 +86,7 @@ class ProcessDocument:
         top_keywords = [keywords[i] for i in sorted_indices[:top_n]]
         return top_keywords
 
-    def get_summary_title(self, chunk) -> str:
+    def get_summary_title(self, chunk: str) -> str:
         """
         Function to give a title of chunk
 
@@ -98,7 +98,7 @@ class ProcessDocument:
         Returns
         -------
         str
-        returns the chunk's title
+            Returns the chunk's title
         """
         summarizer = pipeline("summarization", model="t5-base")
         # Generate a summary of the chunk (keeping it short for the title)
@@ -119,7 +119,7 @@ class ProcessDocument:
         Returns
         -------
         str
-        returns the misspelled text fixed
+            Returns the misspelled text fixed
         """
         # instance of LanguageTool to spanish
         tool = language_tool_python.LanguageTool(lang)

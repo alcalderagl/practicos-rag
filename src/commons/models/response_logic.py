@@ -4,17 +4,20 @@ from src.commons.enums import type_message
 
 class ResponseLogic(BaseModel):
     """
-    Response
+    Represents a structured response with a message and optional response data.
+
+    Attributes
+    ----------
+    response : any
+        The actual response data associated with the operation.
+    type_message : type_message
+        Enum or custom type representing the type of message (e.g., success, error).
+    message : str
+        Detailed message associated with the response.
     """
 
     response: any
-    """
-    Type of message
-    """
     type_message: type_message
-    """
-    Message
-    """
     message: str
 
     class Config:

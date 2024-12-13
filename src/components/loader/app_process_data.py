@@ -5,6 +5,8 @@ from src.commons.logging_messages import LOGG_MESSAGES
 from src.commons.enums.type_message import TypeMessage
 from src.components.loader.app_cleaning_expander import cleaning_expander
 from src.components.loader.app_chunking_expander import chunking_expander
+from src.commons.models.embedding.embedding import Embedding
+from src.embedding.embeddings_logic import EmbeddingManager
 
 # APP TITLE
 st.title(LOGG_MESSAGES["APP_LABEL_LOADER_TITLE"])
@@ -16,6 +18,7 @@ uploaded_files = st.file_uploader(
 )
 
 file_manager = FileManager()
+embedding_manager = EmbeddingManager()
 
 # For every document into uploader file
 for uploaded_file in uploaded_files:
@@ -62,13 +65,21 @@ for uploaded_file in uploaded_files:
                             value=metadata.creation_date,
                             disabled=True,
                         )
-                    # embeddingManager = EmbeddingManager()
+
                     # 2. CLEANING EXPANDER
                     cleaned_documents = cleaning_expander(loader_response)
                     # 3. CHUNKING EXPANDER
-                    chunking_expander(
+                    chunks_metadata = chunking_expander(
                         cleaned_documents=cleaned_documents,
                         loader_response=loader_response,
+                    )
+                    # 4. VECTOR_EMBEDDING
+                    embeddings = embedding_manager.set_embedding(
+                        chunks_metadata=chunks_metadata
+                    )
+                    embedding_manager.store_embeddings_in_qdrant(embeddings=embeddings)
+                    embedding_manager.save_embeddings_to_file(
+                        embeddings=embeddings, file_name=file_name
                     )
                 elif loader_response.type_message == TypeMessage.ERROR:
                     # otherwise show an error message

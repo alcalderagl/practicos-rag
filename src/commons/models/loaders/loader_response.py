@@ -1,35 +1,23 @@
 from typing import List, Optional
 from pydantic import BaseModel
 from src.commons.enums.type_message import TypeMessage
-
-
-class Metadata(BaseModel):
-    author: str
-    title: str
-    creation_date: str
-    page: int
-    source: str
-
-
-class LoaderModel(BaseModel):
-    page_content: str
-    metadata: Metadata
-
-    class Config:
-        arbitrary_types_allowed = True
-
-
-class FileModel(BaseModel):
-    file_ext: str
-    file_name: str
-    loader: List[LoaderModel]
+from src.commons.models.loaders.file import File
 
 
 class LoaderResponse(BaseModel):
     """
-    Response model to streamlit app
+    Represents a response from a document loader containing processed file data and message information.
+
+    Attributes
+    ----------
+    response : File
+        The processed document file, typically containing the result of loading and processing.
+    type_message : TypeMessage
+        An enumeration or custom type representing the type of message (e.g., success, error).
+    message : str
+        A detailed message associated with the loader response, providing additional information.
     """
 
-    response: FileModel
+    response: File
     type_message: TypeMessage
     message: str

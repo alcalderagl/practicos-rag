@@ -1,5 +1,5 @@
 from langchain_community.document_loaders import PyPDFLoader
-from src.commons.models.loaders.loader_response import LoaderModel
+from src.commons.models.loaders.loader import Loader
 from PyPDF2 import PdfReader
 import logging
 
@@ -53,13 +53,23 @@ def _PDFPages(pages: any):
         this returns an array of LoaderModel
     """
     pdfPageResp = [
-        LoaderModel(page_content=page.page_content, metadata=page.metadata)
-        for page in pages
+        Loader(page_content=page.page_content, metadata=page.metadata) for page in pages
     ]
     return pdfPageResp
 
 
 def _extract_metadata(file_path: str):
+    """
+    Extract document metadata using PdfReader
+
+    Parameters
+    ----------
+    file_path : any
+        file path
+
+    Returns
+    -------
+    """
     reader = PdfReader(file_path)
     # get metadata from PdfReader
     metadata = reader.metadata

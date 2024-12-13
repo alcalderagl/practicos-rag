@@ -16,9 +16,9 @@ services:
       - VECTOR_STORE_NAME=regulaciones_mx
       - MODEL_EMBEDDING=distiluse-base-multilingual-cased-v2
       - VECTOR_SIZE=512
-      - REGULATIONS_FOLDER=data/regutations
+      - REGULATIONS_FOLDER=data/regulations
       - EMBEDDINGS_FOLDER=data/embeddings
-      - CHUNKING_FOLDER=data/chunckings
+      - CHUNKING_FOLDER=data/chunks
 
 
   rag-qdrant:
