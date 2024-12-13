@@ -2,3 +2,5 @@
 .env
 data/
 cache/
+tareas/
+evaluaciones/
