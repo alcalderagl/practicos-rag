@@ -4,3 +4,5 @@ data/
 cache/
 tareas/
 evaluaciones/
+.DS_Store
+benchmark_results/
