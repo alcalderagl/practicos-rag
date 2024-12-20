@@ -1,6 +1,6 @@
 import os
 import json
-from uuid import uuid4
+import logging
 from langchain.text_splitter import CharacterTextSplitter
 from src.commons.models.response_logic import ResponseLogic
 from src.commons.enums.type_message import TypeMessage
@@ -10,6 +10,8 @@ from src.commons.models.chunking.chunking import Chunking
 from src.commons.models.document_metadata.document_metadata import DocumentMetadata
 from src.chunking.process_document_logic import ProcessDocument
 from src.commons.models.chunking.chunk_metadata import ChunkMetadata
+
+logging.basicConfig(level=logging.INFO)
 
 
 class ChunkingManager:
@@ -84,17 +86,19 @@ class ChunkingManager:
             file_manager.save_json_file(
                 dir_path=dir_path, file_name=f"{file_name}.json", data=data
             )
-            message = ""
+            message = LOGG_MESSAGES["CHUNKING_SAVE_JSON"]
+            type_message = TypeMessage.INFO
         except (ValueError, KeyError, json.JSONDecodeError) as e:
-            message = LOGG_MESSAGES["CHUNKING_SAVE_JSON"].format(error=e)
+            message = LOGG_MESSAGES["CHUNKING_FAILED_SAVE_JSON"].format(error=e)
+            type_message = TypeMessage.ERROR
         return ResponseLogic(
             response=None,
-            type_message=TypeMessage.ERROR,
+            type_message=type_message,
             message=message,
         )
 
     def chunk_metadata(
-        self, chunk: str, no_serie: int, metadata: DocumentMetadata, file_name: str
+        self, page_content: str, no_serie: int, metadata: DocumentMetadata, file_name: str
     ) -> ChunkMetadata:
         """
         Function to generate chunk metadata
@@ -115,22 +119,19 @@ class ChunkingManager:
         ChunkMetadata
             a chunk metadata
         """
-        # set uuid chunk
-        uuid = str(uuid4())
         chunk_position = no_serie
-        chunk_title = self.process_document.get_summary_title(chunk=chunk)
-        chunk_keywords = self.process_document.getKeywords(document=chunk)
+        chunk_keywords = self.process_document.getKeywords(document=page_content)
         metadata_chunk = ChunkMetadata(
-            uuid=uuid,
             document_title=metadata.title,
             keywords=chunk_keywords,
             source=metadata.source,
             author=metadata.author,
             file_name=file_name,
             chunk_position=chunk_position,
-            chunk_title=chunk_title,
+            topic="",
             page=metadata.page,
             creation_date=metadata.creation_date,
-            chunk=chunk,
+            page_content=page_content,
+            title=metadata.title,
         )
         return metadata_chunk

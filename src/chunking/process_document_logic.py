@@ -4,8 +4,6 @@ import re
 import numpy as np
 from src.commons.models.token.token_info import TokenInfo
 from sklearn.feature_extraction.text import TfidfVectorizer
-from transformers import pipeline
-import language_tool_python
 
 
 class ProcessDocument:
@@ -35,8 +33,6 @@ class ProcessDocument:
         document = re.sub(r"\s+", " ", document).strip()
         # Remove special characters
         document = re.sub(r"[^\w\s]", "", document)
-        # fix misspelled words
-        document = self.misspelled_words("es", document)
         # tokeniz document
         doc = self.nlp(document)
 
@@ -85,45 +81,3 @@ class ProcessDocument:
         # get the top N keywords
         top_keywords = [keywords[i] for i in sorted_indices[:top_n]]
         return top_keywords
-
-    def get_summary_title(self, chunk: str) -> str:
-        """
-        Function to give a title of chunk
-
-        Parameters
-        ----------
-        chunk : str
-            chunking document
-
-        Returns
-        -------
-        str
-            Returns the chunk's title
-        """
-        summarizer = pipeline("summarization", model="t5-base")
-        # Generate a summary of the chunk (keeping it short for the title)
-        summary = summarizer(chunk, max_length=50, min_length=30, do_sample=False)
-        return summary[0]["summary_text"]
-
-    def misspelled_words(self, lang: str, text: str) -> str:
-        """
-        Function to fix misspelled words with a given language
-
-        Parameters
-        ----------
-        lang : str
-            language to fix text misspelling words
-        text : str
-            text
-
-        Returns
-        -------
-        str
-            Returns the misspelled text fixed
-        """
-        # instance of LanguageTool to spanish
-        tool = language_tool_python.LanguageTool(lang)
-        # make spanish corrections
-        matches = tool.check(text=text)
-        text = language_tool_python.utils.correct(text=text, matches=matches)
-        return text

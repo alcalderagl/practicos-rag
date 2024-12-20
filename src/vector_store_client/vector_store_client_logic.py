@@ -7,11 +7,9 @@ from langchain_community.vectorstores import Qdrant
 from src.commons.enums.type_message import TypeMessage
 from src.commons.logging_messages import LOGG_MESSAGES
 from src.commons.models.response_logic import ResponseLogic
-
 logging.basicConfig(level=logging.INFO)
 
-
-class VectorStoreManager:
+class VectorStoreClient:
     def __init__(self):
         # getting or setting name collection
         self.collection_name = os.getenv("VECTOR_STORE_NAME", "regulaciones_mx")
@@ -36,24 +34,16 @@ class VectorStoreManager:
         # Initialize embedding model
         self.embedding_model = HuggingFaceEmbeddings(model_name=self.model_name)
 
-        # create a collection
-        self.create_collection()
-
-        # create vector store
-        self.vector_store = Qdrant(
-            client=self.client,
-            collection_name=self.collection_name,
-            embeddings=self.embedding_model,
-        )
 
     def create_collection(self) -> ResponseLogic:
         """
-        Get qdrant collections
+        Creates or verifies the existence of a collection in the Qdrant vector store.
 
         Returns
         -------
         ResponseLogic:
-            Returns response logic
+            A ResponseLogic object indicating the status of the operation, with
+            additional context such as messages and type of response.
         """
         resp: ResponseLogic
         try:
@@ -98,14 +88,32 @@ class VectorStoreManager:
         logging.info(resp)
         return resp
 
-    def test_qdrant_connection(self):
+    def create_vector_store(self):
         """
-        Get qdrant collections
+        Creates and initializes a vector store for storing and retrieving vector embeddings.
+
+        Returns:
+            Qdrant: An instance of the Qdrant vector store, configured with the provided 
+                    client, collection name, and embedding model.
+        """
+        vector_store = Qdrant(
+            client=self.client,
+            collection_name=self.collection_name,
+            embeddings=self.embedding_model,
+        )
+        return vector_store
+    
+    def test_qdrant_connection(self) -> ResponseLogic:
+        """
+        Tests the connection to the Qdrant vector store.
 
         Returns
         -------
         ResponseLogic:
-            Returns response logic
+            A ResponseLogic object containing the status of the connection test, including:
+            - Response data from the Qdrant client if successful.
+            - Type of message (INFO or ERROR).
+            - A descriptive message about the operation result.
         """
         resp: ResponseLogic
         try:
@@ -123,7 +131,6 @@ class VectorStoreManager:
                     error=e
                 ),
             )
-        # print into console
         logging.info(resp)
         return resp
 
@@ -152,6 +159,5 @@ class VectorStoreManager:
                     error=e
                 ),
             )
-        # print into console
         logging.info(resp)
         return resp

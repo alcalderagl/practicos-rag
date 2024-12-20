@@ -117,3 +117,8 @@ This repository contains the materials and code needed to build a complete Retri
   - The five levels of chunking
   - A guide to chunking
 .
+docker system df
+docker system prune -a -f
+docker exec -it <container-id> bash
+ollama pull llama2
+

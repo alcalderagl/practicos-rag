@@ -35,7 +35,7 @@ def cleaning_expander(loader_response: LoaderResponse) -> list[str]:
             for token in tokens:
                 # join text
                 if not token.is_stopword:
-                    text += f"{token.lemma} "
+                    text += f"{token.text} "
             # print the cleaned document
             st.markdown(
                 f"<p style='font-size: 16px;'>{text}</p>",

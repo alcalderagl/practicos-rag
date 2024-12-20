@@ -3,8 +3,8 @@ pytest-cov==5.0.0
 pylint==3.3.1
 black==24.10.0
 fire==0.7.0
-spacy==2.3.9
-es_core_news_sm==2.3.1
+spacy==3.8.0
+es_core_news_sm==3.8.0
 #torch==1.13.0+cpu --index-url https://download.pytorch.org/whl/cpu
 
 langchain-community
@@ -35,5 +35,7 @@ langchain-huggingface
 PyPDF2
 ragas
 #textblob
-language_tool_python
+#language_tool_python
 flake8
+langchain-ollama
+rerankers

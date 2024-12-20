@@ -1,10 +1,12 @@
 import os
 import json
+import csv
+import logging
 from pathlib import Path
 from src.commons.logging_messages import LOGG_MESSAGES
 from src.commons.models.response_logic import ResponseLogic
 from src.commons.enums.type_message import TypeMessage
-
+logging.basicConfig(level=logging.INFO)
 
 class FileManager:
 
@@ -60,6 +62,44 @@ class FileManager:
         # Save the data in a JSON file
         with open(file_path, "w", encoding="utf-8") as file:
             json.dump(data, file, indent=4, ensure_ascii=False)
+            
+    def save_csv_file(self, dir_path:str, file_name: str, data:list[any], headers: list[str]=[]) -> None:
+        # # create folder
+        self.create_folder(dir_path=dir_path)
+        file_path: str = self.generate_file_path(dir_path=dir_path, file_name=file_name)
+        # #self._exist_csv(file_path=file_path, headers=headers)
+        # with open(file_path, "a", newline="", encoding="utf-8") as f:
+        #     reader = csv.DictReader(f)
+        #     reader = list(reader)
+        #     if len(reader) > 0:
+        #         writer = csv.DictWriter(f, fieldnames=headers)
+        #         writer.writerows(data)
+        #     else:
+        #         writer = csv.DictWriter(f, fieldnames=headers)
+        #         writer.writeheader()
+        #         writer.writerows(data)
+        # Check if the file already exists
+        file_exists = os.path.isfile(file_path)
+        
+        # Open the file in append mode if it exists, or write mode if it doesn't
+        with open(file_path, "a" if file_exists else "w", newline="", encoding="utf-8") as f:
+            writer = csv.DictWriter(f, fieldnames=headers)
+            
+            # Write the header only if the file is being created
+            if not file_exists:
+                writer.writeheader()
+            
+            # Write the new rows
+            writer.writerows(data)
+            
+    def read_csv(self, dir_path:str, file_name:str) -> list[any]:
+        items: list[str] = []
+        file_path: str = self.generate_file_path(dir_path=dir_path, file_name=file_name)
+        with open(file_path, "r", newline="", encoding="utf-8") as f:
+            reader = csv.DictReader(f)
+            items = list(reader)
+        return items
+            
 
     def file_extension(self, file_name: str) -> str:
         """

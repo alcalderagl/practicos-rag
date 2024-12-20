@@ -60,7 +60,7 @@ def chunking_expander(
                 for j, chunk in enumerate(chunk_response.chunks, start=1):
                     # chunk metadata
                     chunk_metadata = chunking_manager.chunk_metadata(
-                        chunk=chunk,
+                        page_content=chunk,
                         no_serie=j,
                         metadata=chunk_response.metadata,
                         file_name=file_name,
@@ -68,8 +68,6 @@ def chunking_expander(
                     chunks_metadata.append(chunk_metadata)
                     # chunk position
                     st.subheader(f"Chunk_ID: chunk_{j}")
-                    # chunk title
-                    st.write(f"Title: {chunk_metadata.chunk_title}")
                     # chunk keywords
                     st.pills(
                         LOGG_MESSAGES["APP_LABEL_CHUNK_KEYWORDS"],
@@ -83,13 +81,13 @@ def chunking_expander(
             else:
                 st.error(chunks.message, icon="🚨")
         # save the chunking in a json file
-        chunking_response = chunking_manager.save_chunks_file(
-            chunking=chunks_response, file_name=file_name
-        )
-        # validates its operation
-        if chunking_response.type_message == TypeMessage.INFO:
-            st.success(chunking_response.message, icon="✅")
-        else:
-            st.warning(chunking_response.message, icon="⚠️")
+        # chunking_response = chunking_manager.save_chunks_file(
+        #     chunking=chunks_response, file_name=file_name
+        # )
+        # # validates its operation
+        # if chunking_response.type_message == TypeMessage.INFO:
+        #     st.success(chunking_response.message, icon="✅")
+        # else:
+        #     st.warning(chunking_response.message, icon="⚠️")
         # return the chunks
         return chunks_metadata

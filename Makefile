@@ -29,6 +29,8 @@ compose-logs:
 	docker compose -f docker-compose.yml logs -f
 compose-restart:
 	docker compose -f docker-compose.yml down && docker compose -f docker-compose.yml up --build -d
+compose-restart-app:
+	docker compose restart rag-app
 compose-clean:
 	docker compose -f docker-compose.yml down -v
 
