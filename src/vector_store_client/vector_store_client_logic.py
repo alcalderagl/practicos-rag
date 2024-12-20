@@ -97,11 +97,12 @@ class VectorStoreClient:
             Qdrant: An instance of the Qdrant vector store, configured with the provided
                     client, collection name, and embedding model.
         """
-        self.vector_store = Qdrant(
+        vector_store = Qdrant(
             client=self.client,
             collection_name=self.collection_name,
             embeddings=self.embedding_model,
         )
+        return vector_store
 
     def test_qdrant_connection(self) -> ResponseLogic:
         """

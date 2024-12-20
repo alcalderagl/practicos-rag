@@ -66,7 +66,7 @@ if st.session_state.chat_history:
             if i == len(st.session_state.chat_history) - 1 and chat.message == "...":
                 with st.spinner("..."):
                     top_k = 3
-                    bot_response = retriever.initial_query_qdrant(
+                    bot_response = retriever.initial_query_retrieval(
                         query_text=user_prompt, top_k=top_k
                     )
                     if bot_response.type_message == TypeMessage.INFO:

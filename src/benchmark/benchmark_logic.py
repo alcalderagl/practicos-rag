@@ -17,7 +17,7 @@ from ragas.metrics import (
 )
 from src.benchmark.models.evaluation import Evaluation
 from src.benchmark.models.question_answer import QuestionAnswer
-from src.llm.llm_logic import OllamaLlm
+from src.llm.llm_logic import LageLangueModel
 from src.vector_store_client.vector_store_client_logic import VectorStoreClient
 from src.commons.files_logic import FileManager
 from src.commons.models.response_logic import ResponseLogic
@@ -35,7 +35,7 @@ class Benchmark:
 
     def generate_questions(self, no_question: int) -> bool:
         qa_generation_prompt = ChatPromptTemplate.from_template(
-            """
+        """
         Your task is to write a factoid question and an answer given a context.
         Your factoid question should be answerable with a specific, concise piece of factual information from the context.
         Your factoid question should be formulated in the same style as questions users could ask in a search engine.
@@ -53,7 +53,9 @@ class Benchmark:
         """
         )
 
-        ollama = OllamaLlm()
+        LLM_model = LageLangueModel()
+        
+        ollama = LLM_model.connect_to_ollama()
 
         question_chain = (
             {"context": RunnablePassthrough()}
@@ -86,6 +88,11 @@ class Benchmark:
         # file_manager.save_json_file("data/questions/", "questions", faqs)
 
         data = self._parse_qa(qas=faqs)
+        self.save_qa(data=data)
+        return True
+    
+    def save_qa(self, data:list[QuestionAnswer])-> None:
+        file_manager = FileManager()
         if len(data) > 0:
             file_manager.save_csv_file(
                 dir_path=self.dir_path,
@@ -93,7 +100,6 @@ class Benchmark:
                 data=data,
                 headers=["question", "answer"],
             )
-        return True
 
     def _parse_qa(self, qas: list[str]) -> list[any]:
         parsed_data: list[any] = []
@@ -111,9 +117,11 @@ class Benchmark:
 
     def evaluate(self, evaluation_data: Evaluation):
         try:
-            ollama = OllamaLlm()
+            LLM_model = LageLangueModel()
+            ollama = LLM_model.connect_to_ollama()
             vector_store_client = VectorStoreClient()
-            retriever = vector_store_client.vector_store.as_retriever()
+            vector_store = vector_store_client.create_vector_store()
+            retriever = vector_store.as_retriever()
             embeddings = OllamaEmbeddings(model="llama3")
             openai_embeddings = OpenAIEmbeddings(model="text-embedding-ada-002")
             api_key = os.getenv("OPENAI_API_KEY", "")

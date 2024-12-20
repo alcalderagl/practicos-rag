@@ -1,12 +1,13 @@
 import os
 import logging
 from langchain_ollama import OllamaLLM
+from langchain_openai import ChatOpenAI
 from langchain_core.prompts import PromptTemplate
 
 logging.basicConfig(level=logging.INFO)
 
 
-class OllamaLlm:
+class LageLangueModel:
     def __init__(self) -> None:
         """
         Initialize LLM
@@ -15,10 +16,26 @@ class OllamaLlm:
         self.ollama_host = os.getenv("OLLAMA_HOST", "localhost")
         # ollama port
         self.ollama_port = os.getenv("OLLAMA_PORT", "11434")
-        # instance of OllamaLLM with model llama3
-        self.llm = OllamaLLM(
+        self.ollama_model = os.getenv("OLLAMA_MODEL", "llama3")
+        # OPENAI api key
+        self.api_key = os.getenv("OPENAI_API_KEY", "XXXX")
+        # gpt-4-turbo-preview
+        self.openai_model = os.getenv("OPENAI_MODEL", "gpt-4o-mini")
+
+        
+    def connect_to_ollama(self) -> OllamaLLM:
+        llm = OllamaLLM(
             model="llama3", base_url=f"http://{self.ollama_host}:{self.ollama_port}"
         )
+        return llm
+    
+    def connect_chat_openAI(self) -> ChatOpenAI:
+        openai_llm = ChatOpenAI(api_key=self.api_key, model=self.openai_model)
+        return openai_llm
+    
+    def connect_chat_ollama(self):
+        pass
+    
 
     def prompter(self, input_variables: list[str], template: str) -> str:
         """
@@ -46,9 +63,8 @@ class OllamaLlm:
             # formatted prompt with template and input variables
             formatted_prompt = prompt_template.format(**variables)
             # return llm response
-            response = self.llm(prompt=formatted_prompt)
-            return response
+            return formatted_prompt
         except (ValueError, KeyError) as e:
             # if there's an error then
-            logging.info("llm-prompt-error %", e)
-            return "No se pudo generar respuesta"
+            logging.info(f"Error with prompter: {e}")
+            return ""

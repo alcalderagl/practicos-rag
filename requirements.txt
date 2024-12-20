@@ -39,3 +39,4 @@ ragas
 flake8
 langchain-ollama
 rerankers
+lark

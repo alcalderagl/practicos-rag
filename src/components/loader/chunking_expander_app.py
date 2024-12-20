@@ -81,13 +81,12 @@ def chunking_expander(
             else:
                 st.error(chunks.message, icon="🚨")
         # save the chunking in a json file
-        # chunking_response = chunking_manager.save_chunks_file(
-        #     chunking=chunks_response, file_name=file_name
-        # )
-        # # validates its operation
-        # if chunking_response.type_message == TypeMessage.INFO:
-        #     st.success(chunking_response.message, icon="✅")
-        # else:
-        #     st.warning(chunking_response.message, icon="⚠️")
-        # return the chunks
+        chunking_response = chunking_manager.save_chunks_file(
+            chunking=chunks_response, file_name=file_name
+        )
+        # validates its operation
+        if chunking_response.type_message == TypeMessage.INFO:
+            st.success(chunking_response.message, icon="✅")
+        else:
+            st.warning(chunking_response.message, icon="⚠️")
         return chunks_metadata

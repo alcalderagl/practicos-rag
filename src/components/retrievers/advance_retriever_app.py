@@ -3,11 +3,14 @@ from src.commons.models.chat_retriever.chat_history import ChatHistory
 from src.embedding.embeddings_logic import EmbeddingManager
 from src.commons.enums.type_message import TypeMessage
 from src.retrievers.retrievers_logic import Retrievers
+from src.query_rewriting.query_rewriting_logic import QueryRewriting
 
 # Título de la aplicación
-st.title("Initial vector retriever")
+st.title("Advance vector retriever")
 embedding = EmbeddingManager()
 retriever = Retrievers()
+query_rewriter = QueryRewriting()
+rewrited_query = ""
 # Inicializar chat history si no está en el estado
 if "chat_history" not in st.session_state:
     st.session_state.chat_history = []
@@ -17,6 +20,7 @@ user_prompt = st.chat_input("Escribe tu consulta")
 
 # Procesar la consulta del usuario
 if user_prompt:
+    # rewrited_query = query_rewriter.rewriting(user_prompt)
     st.session_state.chat_history.append(ChatHistory(role="user", message=user_prompt))
     st.session_state.chat_history.append(ChatHistory(role="bot", message="..."))
 
@@ -66,22 +70,23 @@ if st.session_state.chat_history:
             if i == len(st.session_state.chat_history) - 1 and chat.message == "...":
                 with st.spinner("..."):
                     top_k = 3
-                    bot_response = retriever.initial_query_qdrant(
-                        query_text=user_prompt, top_k=top_k
+                    bot_response = retriever.advance_query_retrieval(
+                        query=user_prompt
                     )
-                    if bot_response.type_message == TypeMessage.INFO:
-                        best_resp = []
-                        for index, resp in enumerate(bot_response.response):
-                            best_resp.append(
-                                f"<span class=\"no-response\">Resultado {index + 1} - {round(resp.score * 100, 2) }%</span> <br/> {resp.payload['page_content']} <br/> <br/>"
-                            )
-                        chat.message = (
-                            f'<span class="no-response">Te comparto los {top_k} resultados similares a tu pregunta:</span><br/><br/>'
-                            + " ".join(best_resp)
-                        )
-                    else:
-                        chat.message = bot_response.message
-            st.markdown(
-                f'<div class="chat-container"><div class="bot-message">{chat.message}</div></div>',
-                unsafe_allow_html=True,
-            )
+                    st.write(bot_response.response)
+                    # if bot_response.type_message == TypeMessage.INFO:
+                    #     best_resp = []
+                    #     for index, resp in enumerate(bot_response.response):
+                    #         best_resp.append(
+                    #             f"<span class=\"no-response\">Resultado {index + 1} - {round(resp.score * 100, 2) }%</span> <br/> {resp.payload['page_content']} <br/> <br/>"
+                    #         )
+                    #     chat.message = (
+                    #         f'<span class="no-response">Te comparto los {top_k} resultados similares a tu pregunta:</span><br/><br/>'
+                    #         + " ".join(best_resp)
+                    #     )
+                    # else:
+                    #     chat.message = bot_response.message
+            # st.markdown(
+            #     f'<div class="chat-container"><div class="bot-message">{chat.message}</div></div>',
+            #     unsafe_allow_html=True,
+            # )
