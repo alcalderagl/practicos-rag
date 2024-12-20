@@ -44,7 +44,9 @@ class QueryRewriting:
             rewriting_query = query_rewriting_chain.invoke(question)
             
             logging.info(f"response rewriting query: {rewriting_query}")
-            response = QuestionRewriting(query=question, rewriting_query=rewriting_query["text"])
+            re_query:str = rewriting_query["text"]
+            re_query = re_query.replace("Consulta: \"", "").replace("Consulta mejorada: \"", "").replace("Consulta", "").replace("**\"", "").replace("**", "").strip()
+            response = QuestionRewriting(query=question, rewriting_query=re_query)
     
             # Requisitos para etiquetar productos con cafeína en alimentos y bebidas?
             return response

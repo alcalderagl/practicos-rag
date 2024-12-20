@@ -11,8 +11,9 @@ from src.llm.llm_logic import LageLangueModel
 from src.retrievers.custom_self_query_retriever import CustomSelfQueryRetriever
 from src.reranking.reranking_logic import Reranking
 from src.summarization.summarization_logic import Summarization
-# from src.benchmark.benchmark_logic import Benchmark
-# from src.benchmark.models.question_answer import QuestionAnswer
+from langchain_qdrant import RetrievalMode, QdrantVectorStore
+from src.benchmark.benchmark_logic import Benchmark
+from src.benchmark.models.question_answer import QuestionAnswer
 
 logging.basicConfig(level=logging.INFO)
 
@@ -36,19 +37,23 @@ class Retrievers:
             if len(query_retrieval_docs) > 0:
                 reranking = Reranking()
                 ranked_docs = reranking.reranker(query, query_retrieval_docs)
-                if ranked_docs != None:
-                    response_logic.response = ranked_docs
+                if len(ranked_docs) > 0:
+                    # docs = []
+                    # for doc in ranked_docs:
+                    #     doc_txt = doc.document.text
+                    #     docs.append({"page_content":doc_txt})
+                    # response_logic.response = docs
                     summarization = Summarization()
-                    summarized_answer =  summarization.summarize(query=query,ranked_results=ranked_docs.results)
-                #     if summarized_answer != "":
-                #         benchmark = Benchmark()
-                #         response_logic.type_message=TypeMessage.INFO
-                #         response_logic.response = summarized_answer
-                #         qa = QuestionAnswer(question=query, answer=summarized_answer).model_dump()
-                #         benchmark.save_qa(data=[qa])
-                #     else:
-                #         response_logic.response = ""
-                #         response_logic.message="THERE ARE NOT A SUMMARIZATION ANSWER"
+                    summarized_answer =  summarization.summarize(query=query,ranked_results=query_retrieval_docs)
+                    if summarized_answer != "":
+                        benchmark = Benchmark()
+                        response_logic.type_message=TypeMessage.INFO
+                        response_logic.response = summarized_answer
+                        qa = QuestionAnswer(question=query, answer=summarized_answer).model_dump()
+                        benchmark.save_qa(data=[qa])
+                    else:
+                        response_logic.response = ""
+                        response_logic.message="THERE ARE NOT A SUMMARIZATION ANSWER"
                 else:
                     response_logic.message="THERE WAS A PROBLEM WITH RERANKIN"
             else:
@@ -58,8 +63,18 @@ class Retrievers:
             logging.info(f"Error with advance query retrieval: {e}")
             
         return response_logic
+    
+    def _hybrid_query_retrieval(self, query:str)-> ResponseLogic:
+        vector_store_client = VectorStoreClient()
+        qdrant = QdrantVectorStore.from_existing_collection(
+        embedding=vector_store_client.embedding_model,
+        location=":memory:",  # Or the URL of your Qdrant instance (e.g., "http://localhost:6333")
+        collection_name=qdrant,
+        retrieval_mode=RetrievalMode.HYBRID,
+        )
 
-    def _self_query_retrieval(self, query: str) -> ResponseLogic:
+
+    def _self_query_retrieval(self, query: str):
         """
         Retrieves relevant documents based on a self-query mechanism.
 
