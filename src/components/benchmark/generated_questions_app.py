@@ -13,6 +13,8 @@ def initialized_benchmark()-> ResponseLogic:
     # get qa dataset
     file_response = benchmark.qa_dataset()
     st.session_state["generated_questions"]=file_response.response
+    if file_response.type_message == TypeMessage.INFO:
+        st.session_state["enabled_to_evaluate"]=True
     return file_response
 
 def generate_question(no_question:int) -> ResponseLogic:
