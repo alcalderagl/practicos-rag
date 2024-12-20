@@ -98,7 +98,11 @@ class ChunkingManager:
         )
 
     def chunk_metadata(
-        self, page_content: str, no_serie: int, metadata: DocumentMetadata, file_name: str
+        self,
+        page_content: str,
+        no_serie: int,
+        metadata: DocumentMetadata,
+        file_name: str,
     ) -> ChunkMetadata:
         """
         Function to generate chunk metadata

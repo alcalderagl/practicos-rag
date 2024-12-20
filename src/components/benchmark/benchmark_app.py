@@ -9,14 +9,16 @@ benchmark = Benchmark()
 st.title("Benchmark")
 
 if len(st.session_state["generated_questions"]) < 0:
-    questions=[]
-    ground_truths:list[str] = []
+    questions = []
+    ground_truths: list[str] = []
     for generated_question in st.session_state.generated_questions:
         questions.append(generated_question["question"])
         ground_truths.append(generated_question["answer"])
-                
-    evaluation = Evaluation(question=questions, reference=ground_truths, retrieved_contexts=[], answer=[])
-    
+
+    evaluation = Evaluation(
+        question=questions, reference=ground_truths, retrieved_contexts=[], answer=[]
+    )
+
     if st.button("Evaluate retrievers"):
         with st.container():
             st.subheader("Initial RAG")
@@ -27,5 +29,3 @@ if len(st.session_state["generated_questions"]) < 0:
 else:
     st.warning("You dont have any generated question, create generate questions")
     st.markdown("[Go to generated questions Page](/generated_questions_app)")
-
-

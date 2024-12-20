@@ -23,10 +23,8 @@ class EmbeddingManager:
             vector_store_client = VectorStoreClient()
             embeddings: list[Embedding] = []
             for chunk in chunks_metadata:
-                vector_embedding = (
-                    vector_store_client.embedding_model.embed_documents(
-                        texts=[chunk.page_content]
-                    )
+                vector_embedding = vector_store_client.embedding_model.embed_documents(
+                    texts=[chunk.page_content]
                 )
                 uuid = str(uuid4())
                 embedding = Embedding(
@@ -51,7 +49,7 @@ class EmbeddingManager:
             )
         except (ValueError, KeyError) as e:
             logging.info("Error when storing embeddings into qdrant %", e)
-            
+
     def save_embeddings_to_file(
         self, embeddings: list[Embedding], file_name: str
     ) -> None:

@@ -7,7 +7,9 @@ from langchain_community.vectorstores import Qdrant
 from src.commons.enums.type_message import TypeMessage
 from src.commons.logging_messages import LOGG_MESSAGES
 from src.commons.models.response_logic import ResponseLogic
+
 logging.basicConfig(level=logging.INFO)
+
 
 class VectorStoreClient:
     def __init__(self):
@@ -33,7 +35,6 @@ class VectorStoreClient:
 
         # Initialize embedding model
         self.embedding_model = HuggingFaceEmbeddings(model_name=self.model_name)
-
 
     def create_collection(self) -> ResponseLogic:
         """
@@ -93,16 +94,15 @@ class VectorStoreClient:
         Creates and initializes a vector store for storing and retrieving vector embeddings.
 
         Returns:
-            Qdrant: An instance of the Qdrant vector store, configured with the provided 
+            Qdrant: An instance of the Qdrant vector store, configured with the provided
                     client, collection name, and embedding model.
         """
-        vector_store = Qdrant(
+        self.vector_store = Qdrant(
             client=self.client,
             collection_name=self.collection_name,
             embeddings=self.embedding_model,
         )
-        return vector_store
-    
+
     def test_qdrant_connection(self) -> ResponseLogic:
         """
         Tests the connection to the Qdrant vector store.

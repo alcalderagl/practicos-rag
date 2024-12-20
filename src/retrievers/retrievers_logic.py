@@ -43,30 +43,6 @@ class Retrievers:
         except (ValueError, KeyError) as e:
             return []
 
-    def initial_query(
-        self, question: str, search_type: str = "mmr", k_search: int = 3
-    ) -> ResponseLogic:
-        resp: ResponseLogic
-        try:
-            retriever = self.vector_store_client.vector_store.as_retriever(
-                search_type=search_type, search_kwargs={"k": k_search}
-            )
-
-            docs = retriever.invoke(question)
-            logging.info("query response %", docs)
-            resp = ResponseLogic(
-                response=docs,
-                type_message=TypeMessage.ERROR,
-                message=LOGG_MESSAGES["RETRIEVER_SUCCESS"],
-            )
-        except (ValueError, KeyError) as e:
-            resp = ResponseLogic(
-                response="I don't have the data",
-                type_message=TypeMessage.ERROR,
-                message=LOGG_MESSAGES["RETRIEVER_FAILED"].format(error=e),
-            )
-        return resp
-
     def initial_query_qdrant(self, query_text: str, top_k: int = 3) -> ResponseLogic:
         """Query Qdrant with a query text and return top_k similar results."""
         resp: ResponseLogic
