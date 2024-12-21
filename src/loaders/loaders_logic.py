@@ -1,11 +1,11 @@
-from src.commons.logging_messages import LOGG_MESSAGES
 from .pdf_loader_logic import PDFLoader
-from src.commons.models.loaders.loader_response import File, LoaderResponse
+from src.commons.logging_messages import LOGG_MESSAGES
+from src.commons.models.response_logic import ResponseLogic
 from src.commons.enums.type_message import TypeMessage
 from src.commons.files_logic import FileManager
 
 
-class LoaderManager:
+class Loading:
     def __init__(self, dir_path: str, file_name: str) -> None:
         """
         Load document into a langchain LOADER document
@@ -20,7 +20,7 @@ class LoaderManager:
         self.file_name = file_name
         self.dir_path = dir_path
 
-    def file_loader(self) -> LoaderResponse:
+    def file_loader(self) -> ResponseLogic:
         """
         Load document into a langchain LOADER document
 
@@ -34,33 +34,31 @@ class LoaderManager:
         file_ext = file_manager.file_extension(self.dir_path)[1:]
         # pass directory path to disponible loader files
         loader_files = self._loader_files()
-        response: LoaderResponse
+        response_logic: ResponseLogic
 
         # if file_ext is into loader document method then
         if file_ext in loader_files:
             try:
                 # get file method respect to its file extension
                 loader_response = loader_files[file_ext](self.dir_path)
-                # create an instance of FileModel
-                file_resp = File(
-                    file_ext=file_ext, loader=loader_response, file_name=self.file_name
-                )
                 # defining the log message output
                 message = LOGG_MESSAGES["LOADER_DOCUMENT_ADDED"].format(
                     file_name=self.file_name
                 )
                 # return response
-                response = LoaderResponse(
-                    message=message, response=file_resp, type_message=TypeMessage.INFO
+                response_logic = ResponseLogic(
+                    response=loader_response,
+                    type_message=TypeMessage.INFO,
+                    message=message,
                 )
             except (ValueError, KeyError) as e:
                 # catching the exception error
                 message = LOGG_MESSAGES["LOADER_ERROR_LOADING"].format(error=e)
-                # return a default LoaderResponse
-                response = LoaderResponse(
+                # return a default ResponseLogic
+                response_logic = ResponseLogic(
                     message=message,
                     type_message=TypeMessage.ERROR,
-                    response=File(file_ext="", loader=[], file_name=self.file_name),
+                    response=None,
                 )
         else:
             # unsopported file extension
@@ -68,11 +66,11 @@ class LoaderManager:
                 file_name=self.file_name, ext=file_ext
             )
             # return response
-            response = LoaderResponse(
+            response_logic = ResponseLogic(
                 message=message, type_message=TypeMessage.WARNING, response=None
             )
 
-        return response
+        return response_logic
 
     def _loader_files(self):
         """

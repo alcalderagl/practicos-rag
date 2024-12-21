@@ -7,7 +7,7 @@ from PyPDF2 import PdfReader
 logging.basicConfig(level=logging.INFO)
 
 
-def PDFLoader(file_path: str)->List[Document]:
+def PDFLoader(file_path: str) -> List[Document]:
     """
     Load document into PyPDFLoader langchain library
 
@@ -37,6 +37,7 @@ def PDFLoader(file_path: str)->List[Document]:
     # pages = _PDFPages(document)
     logging.info(metadata)
     return document
+
 
 def _extract_metadata(file_path: str):
     """
