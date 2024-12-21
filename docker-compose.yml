@@ -14,7 +14,7 @@ services:
       - QDRANT_HOST=rag-qdrant
       - QDRANT_PORT=6333
       - VECTOR_STORE_NAME=regulaciones_mx
-      - MODEL_EMBEDDING=distiluse-base-multilingual-cased-v2
+      - MODEL_EMBEDDING=text-embedding-ada-002
       - VECTOR_SIZE=512
       - REGULATIONS_FOLDER=data/regulations
       - EMBEDDINGS_FOLDER=data/embeddings

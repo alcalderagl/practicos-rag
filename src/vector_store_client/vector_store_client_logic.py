@@ -2,12 +2,13 @@ import os
 import logging
 from qdrant_client import QdrantClient
 from qdrant_client.http.models import VectorParams, Distance
-from langchain.embeddings import HuggingFaceEmbeddings
 from langchain_community.vectorstores import Qdrant
 from src.commons.enums.type_message import TypeMessage
 from src.commons.logging_messages import LOGG_MESSAGES
 from src.commons.models.response_logic import ResponseLogic
-
+from langchain_openai import OpenAIEmbeddings
+# from langchain_ollama import OllamaEmbeddings
+# from langchain.embeddings import HuggingFaceEmbeddings
 logging.basicConfig(level=logging.INFO)
 
 
@@ -18,9 +19,8 @@ class VectorStoreClient:
         # getting or setting qdrant port
         self._port = os.getenv("QDRANT_PORT", "6333")
         # getting or setting model embedding
-        self.model_name = os.getenv(
-            "MODEL_EMBEDDING", "distiluse-base-multilingual-cased-v2"
-        )
+        self.model_name = os.getenv("MODEL_EMBEDDING", "text-embedding-ada-002")
+        self.api_key = os.getenv("OPENAI_API_KEY", "XXXX")
         # getting or setting qdrant host
         self._host = os.getenv("QDRANT_HOST", "localhost")
         # getting or setting model embedding size
@@ -34,7 +34,13 @@ class VectorStoreClient:
         self.client = QdrantClient(host=self._host, port=self._port)
 
         # Initialize embedding model
-        self.embedding_model = HuggingFaceEmbeddings(model_name=self.model_name)
+        self.embedding_model = OpenAIEmbeddings(
+            model=self.model_name, api_key=self.api_key
+        )
+        # ---- hugging embeddings
+        # HuggingFaceEmbeddings(model_name=self.model_name)
+        # ---- OLLAMA embeddings
+        # self.embedding_model = OllamaEmbeddings(model="llama3")
 
     def create_collection(self) -> ResponseLogic:
         """
@@ -46,14 +52,14 @@ class VectorStoreClient:
             A ResponseLogic object indicating the status of the operation, with
             additional context such as messages and type of response.
         """
-        resp: ResponseLogic
+        response_logic: ResponseLogic
         try:
             # get collection name from qdrant vector store
             existing_collections = [
                 collection.name
                 for collection in self.client.get_collections().collections
             ]
-            print("Colecciones existentes:", existing_collections)
+            logging.info(f"existent collectisons: {existing_collections}")
 
             if self.collection_name not in existing_collections:
                 # Create collection when it doesn't exist
@@ -61,7 +67,8 @@ class VectorStoreClient:
                     collection_name=self.collection_name,
                     vectors_config=self._vectors_params,
                 )
-                resp = ResponseLogic(
+                # return response
+                response_logic = ResponseLogic(
                     response=None,
                     type_message=TypeMessage.INFO,
                     message=LOGG_MESSAGES["VECTOR_STORE_COLLECTION_CREATED"].format(
@@ -70,7 +77,7 @@ class VectorStoreClient:
                 )
             else:
                 # collection exists
-                resp = ResponseLogic(
+                response_logic = ResponseLogic(
                     response=None,
                     type_message=TypeMessage.WARNING,
                     message=LOGG_MESSAGES["VECTOR_STORE_COLLECTION_EXISTS"].format(
@@ -78,16 +85,16 @@ class VectorStoreClient:
                     ),
                 )
         except (ValueError, KeyError) as e:
-            resp = ResponseLogic(
+            # error when creating a collection
+            response_logic = ResponseLogic(
                 response=None,
                 type_message=TypeMessage.ERROR,
                 message=LOGG_MESSAGES["VECTOR_STORE_COLLECTION_CREATION_FAILED"].format(
                     error=e
                 ),
             )
-        # print into console
-        logging.info(resp)
-        return resp
+        logging.info(f"creation of vector store: {response_logic}")
+        return response_logic
 
     def create_vector_store(self):
         """
@@ -116,24 +123,26 @@ class VectorStoreClient:
             - Type of message (INFO or ERROR).
             - A descriptive message about the operation result.
         """
-        resp: ResponseLogic
+        response_logic: ResponseLogic
         try:
+            # success connection to qdrant
             client_conn = self.client.info()
-            resp = ResponseLogic(
+            response_logic = ResponseLogic(
                 response=client_conn,
                 type_message=TypeMessage.INFO,
                 message=LOGG_MESSAGES["VECTOR_STORE_SUCCESS_QDRANT_CONN"],
             )
         except (ValueError, KeyError) as e:
-            resp = ResponseLogic(
+            # error to connect to qdrant
+            response_logic = ResponseLogic(
                 response=None,
                 type_message=TypeMessage.ERROR,
                 message=LOGG_MESSAGES["VECTOR_STORE_FAILED_QDRANT_CONN"].format(
                     error=e
                 ),
             )
-        logging.info(resp)
-        return resp
+        logging.info(f"test qdrant connection {response_logic}")
+        return response_logic
 
     def delete_qdrant_collection(self) -> ResponseLogic:
         """
@@ -144,21 +153,23 @@ class VectorStoreClient:
         ResponseLogic
             An instance of ResponseLogic containing details about the upload operation.
         """
-        resp: ResponseLogic
+        response_logic: ResponseLogic
         try:
+            # delete qdrant collection
             self.client.delete_collection(collection_name=self.collection_name)
-            resp = ResponseLogic(
+            response_logic = ResponseLogic(
                 response=None,
                 type_message=TypeMessage.INFO,
                 message=LOGG_MESSAGES["VECTOR_STORE_COLLECTION_SUCCESS_DELETED"],
             )
         except (ValueError, KeyError) as e:
-            resp = ResponseLogic(
+            # error when deleting qdrant collection
+            response_logic = ResponseLogic(
                 response=None,
                 type_message=TypeMessage.ERROR,
                 message=LOGG_MESSAGES["VECTOR_STORE_COLLECTION_FAILED_DELETED"].format(
                     error=e
                 ),
             )
-        logging.info(resp)
-        return resp
+        logging.info(f"delete qdrant collection: {response_logic}")
+        return response_logic
