@@ -1,8 +1,13 @@
+import logging
+from typing import List
 from langchain_community.document_loaders import PyPDFLoader
-from src.commons.models.loaders.loader_response import LoaderModel
+from langchain_core.documents import Document
+from PyPDF2 import PdfReader
+
+logging.basicConfig(level=logging.INFO)
 
 
-def PDFLoader(file_path: str):
+def PDFLoader(file_path: str) -> List[Document]:
     """
     Load document into PyPDFLoader langchain library
 
@@ -13,35 +18,40 @@ def PDFLoader(file_path: str):
 
     Returns
     -------
-    LoaderModel
-        returns an array of LoaderModel
+    List[Document]
+        returns a list of Documents
     """
     loader = PyPDFLoader(file_path)
     document = loader.load_and_split()
-    pages = _PDFPages(document)
-    return pages
+    # getting the metadata using PyPDF2
+    metadata = _extract_metadata(file_path)
+    # into every document setting the properties of metadata
+    for doc in document:
+        doc.metadata.update(
+            {
+                "author": metadata.get("/Author", ""),
+                "title": metadata.get("/Title", ""),
+                "creation_date": metadata.get("/CreationDate", ""),
+            }
+        )
+    # pages = _PDFPages(document)
+    logging.info(metadata)
+    return document
 
 
-def _PDFPages(pages: any):
+def _extract_metadata(file_path: str):
     """
-    Load document into PDFLoader langchain library
+    Extract document metadata using PdfReader
 
     Parameters
     ----------
-    pages : any
-        Directory path
+    file_path : any
+        file path
 
     Returns
     -------
-    LoaderModel
-        this returns an array of LoaderModel
     """
-    pdfPageResp = [
-        LoaderModel(
-            pageContent=page.page_content,
-            source=page.metadata["source"],
-            page=page.metadata["page"],
-        )
-        for page in pages
-    ]
-    return pdfPageResp
+    reader = PdfReader(file_path)
+    # get metadata from PdfReader
+    metadata = reader.metadata
+    return metadata

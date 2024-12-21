@@ -1,6 +1,12 @@
 # Usa una imagen base de Python
 FROM python:3.11-slim
 
+# Install Java
+RUN apt-get update && \
+    apt-get install -y default-jre && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
+
 # Establece el directorio de trabajo
 WORKDIR /app
 

@@ -2,6 +2,7 @@
 
 Welcome to the **Building an End-to-End Retrieval-Augmented Generation System** repository. This repository is designed to guide you through the process of creating a complete Retrieval-Augmented Generation (RAG) system from scratch, following a structured curriculum.
 
+
 ## Setup Instructions
 
 To get started with the course:
@@ -93,6 +94,8 @@ Before add files to head it is necessary to
 
 This repository contains the materials and code needed to build a complete Retrieval-Augmented Generation (RAG) system. A RAG system combines the strengths of large language models with an external knowledge base to improve the accuracy and relevance of generated responses. Throughout this course, you'll gain hands-on experience with the various components of a RAG system, from document chunking to deployment in the cloud.
 
+document presentation https://docs.google.com/presentation/d/1ZCYN4eOQmwh1axoAprV7S3lnt7KKk2flkXBLmKPJIGs/edit?usp=sharing
+
 ## Course Outline
 
 ### Lesson 1: Introduction to Retrieval-Augmented Generation (RAG)
@@ -117,3 +120,8 @@ This repository contains the materials and code needed to build a complete Retri
   - The five levels of chunking
   - A guide to chunking
 .
+docker system df
+docker system prune -a -f
+docker exec -it <container-id> bash
+ollama pull llama2
+

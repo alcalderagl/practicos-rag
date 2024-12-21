@@ -14,11 +14,16 @@ services:
       - QDRANT_HOST=rag-qdrant
       - QDRANT_PORT=6333
       - VECTOR_STORE_NAME=regulaciones_mx
-      - MODEL_EMBEDDING=sentence-transformers/all-MiniLM-L6-v2
-      - VECTOR_SIZE=384
-        
-
-
+      - MODEL_EMBEDDING=text-embedding-ada-002
+      - VECTOR_SIZE=1536
+      - REGULATIONS_FOLDER=data/regulations
+      - EMBEDDINGS_FOLDER=data/embeddings
+      - CHUNKING_FOLDER=data/chunks
+      - OLLAMA_HOST=ollama-llm
+      - OLLAMA_PORT=11434
+    networks:
+      - default
+  
   rag-qdrant:
     image: qdrant/qdrant:v1.3.2
     container_name: rag-qdrant
@@ -26,7 +31,25 @@ services:
       - "6333:6333"
     volumes:
       - qdrant_data:/qdrant/storage
+    networks:
+      - default
+
+  ollama-llm:
+    image: ollama/ollama:latest
+    deploy:
+      resources:
+        limits:
+          memory: 8GiB
+    container_name: ollama-llm
+    ports:
+      - "11434:11434"  # Ollama's default API port
+    volumes:
+      - ./ollama_models:/root/.ollama  # Add this for persistent model storage
+    networks:
+      - default
+    
 
 volumes:
   qdrant_data:
+  ollama_models:
 

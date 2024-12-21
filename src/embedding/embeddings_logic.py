@@ -1,83 +1,107 @@
-from uuid import uuid4
+import os
 import json
-from src.vector_store_client.vector_store_client_logic import VectorStoreManager
-from src.commons.files_logic import createFolder, generate_file_path
-from src.commons.models.response_logic import ResponseLogic
-from src.commons.enums.type_message import TypeMessage
+import logging
+from uuid import uuid4
+from src.vector_store_client.vector_store_client_logic import VectorStoreClient
+from src.embedding.models.embedding import Embedding
+from src.commons.files_logic import FileManager
+from src.chunking.models.chunk_metadata import ChunkMetadata
+
+
+logging.basicConfig(level=logging.INFO)
 
 
 class EmbeddingManager:
-    def __init__(self):
-        # Inicializar the VectorStoreManager
-        self.vectorStoreManager = VectorStoreManager()
+    def __init__(self) -> None:
+        pass
 
-    def set_embeddings(self, texts: list) -> list:
-        """Generate embeddings from texts and return them."""
-        embeddings = self.vectorStoreManager.embedding_model.embed_documents(texts)
-        return embeddings
+    def set_embedding(self, chunks_metadata: list[ChunkMetadata]) -> list[Embedding]:
+        """
+        Generate embeddings from text chunks and return them as a list of Embedding objects.
 
-    def store_embeddings_in_qdrant(
-        self, texts: list, embeddings: list, metadata: list = None
-    ):
-        """Store the embeddings and corresponding texts into Qdrant."""
-        points = []
-        for i, (text, embedding) in enumerate(zip(texts, embeddings)):
-            doc_metadata = metadata[i] if metadata else {}
-            point = {
-                "id": str(uuid4()),
-                "vector": embedding,
-                "payload": {
-                    "text": text,
-                    "doc": doc_metadata.get("doc", ""),  # Optional document metadata
-                    "author": doc_metadata.get("author", ""),
-                    "date": doc_metadata.get("date", ""),
-                },
-            }
-            points.append(point)
+        Parameters
+        ----------
+        chunks_metadata : list[ChunkMetadata]
+            A list of ChunkMetadata objects containing text content to be embedded.
 
-        # Upload embeddings to Qdrant
-        self.vectorStoreManager.client.upsert(
-            collection_name=self.vectorStoreManager.collection_name, points=points
-        )
-        print(f"Stored {len(points)} embeddings in Qdrant.")
-
-        self.save_embeddings_to_file(points, "mx_embedding_regulations.json")
-
-    def save_embeddings_to_file(self, points: list, file_name: str):
-        """Save embeddings to a local file (json)"""
-        path_dir = "data/embeddings"
-        createFolder(path_dir)  # Create embeddings folder if it doesn't exist
-        embeddings_file_path = generate_file_path(path_dir, file_name)
+        Returns
+        -------
+        list[Embedding]
+            A list of Embedding objects generated from the provided text chunks.
+        """
         try:
-            with open(embeddings_file_path, "w", encoding="utf-8") as f:
-                json.dump(points, f, indent=4)
-            print(f"Embeddings saved to {embeddings_file_path}.")
-        except (ValueError, KeyError, json.JSONDecodeError) as e:
-            print(f"Error saving embeddings: {e}")
-
-    def query_qdrant(self, query_text: str, top_k: int = 5) -> ResponseLogic:
-        """Query Qdrant with a query text and return top_k similar results."""
-        resp: ResponseLogic
-        try:
-            query_embedding = self.vectorStoreManager.embedding_model.embed_query(
-                query_text
-            )
-
-            results = self.vectorStoreManager.client.search(
-                collection_name=self.vectorStoreManager.collection_name,
-                query_vector=query_embedding,
-                limit=top_k,
-            )
-            resp = ResponseLogic(
-                response=results,
-                message=" i have the data",
-                typeMessage=TypeMessage.INFO,
-            )
+            # Inicializar the vector store client
+            vector_store_client = VectorStoreClient()
+            embeddings: list[Embedding] = []
+            for chunk in chunks_metadata:
+                vector_embedding = vector_store_client.embedding_model.embed_documents(
+                    texts=[chunk.page_content]
+                )
+                uuid = str(uuid4())
+                embedding = Embedding(
+                    id=uuid, vector=vector_embedding[0], payload=chunk
+                )
+                embeddings.append(embedding)
+            return embeddings
         except (ValueError, KeyError) as e:
-            resp = ResponseLogic(
-                response="I don't have data",
-                message="I don't have data",
-                typeMessage=TypeMessage.ERROR,
-            )
+            logging.info("setting embedding error %", e)
+            return []
 
-        return resp
+    def store_embeddings_in_qdrant(self, embeddings: list[Embedding]) -> None:
+        """
+        Store the serialized embeddings and corresponding texts into Qdrant.
+
+        Parameters
+        ----------
+        embeddings : list[Embedding]
+            A list of embedding objects that need to be stored.
+
+        Returns
+        -------
+        None
+        """
+        # Upload embeddings to Qdrant
+        try:
+            # Instance of VectorStoreClient
+            vector_store_client = VectorStoreClient()
+            # Serialize each embedding object into a dictionary using model_dump()
+            embeddings = [embedding.model_dump() for embedding in embeddings]
+            # Upsert (insert or update) the embeddings into the Qdrant collection
+            vector_store_client.client.upsert(
+                collection_name=vector_store_client.collection_name,
+                points=embeddings,
+            )
+            logging.info(f"embeddings saved into qdrant: {embeddings[:3]}")
+        except (ValueError, KeyError) as e:
+            logging.info(f"Error when saving embeddings into qdrant {e}")
+
+    def save_embeddings_to_file(
+        self, embeddings: list[Embedding], file_name: str
+    ) -> None:
+        """
+        Save embeddings to a local JSON file.
+
+        Parameters
+        ----------
+        embeddings : list[Embedding]
+            A list of embedding objects to be saved.
+        file_name : str
+            The desired name of the JSON file where embeddings will be saved.
+
+        Returns
+        -------
+        None
+        """
+        data = {"data": [embedding.model_dump() for embedding in embeddings]}
+        try:
+            file_manager = FileManager()
+            # get file name without extension
+            file_name = file_manager.get_file_name(file=file_name)
+            # directory path
+            dir_path: str = os.getenv("EMBEDDINGS_FOLDER", "data/embeddings")
+            # save document
+            file_manager.save_json_file(
+                dir_path=dir_path, file_name=f"{file_name}.json", data=data
+            )
+        except (ValueError, KeyError, json.JSONDecodeError) as e:
+            logging.info(f"error saving the embedidng: {e}")

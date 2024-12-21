@@ -1,86 +1,141 @@
 import os
 import json
+import logging
 from langchain.text_splitter import CharacterTextSplitter
 from src.commons.models.response_logic import ResponseLogic
 from src.commons.enums.type_message import TypeMessage
 from src.commons.logging_messages import LOGG_MESSAGES
+from src.commons.files_logic import FileManager
+from src.chunking.models.chunking import Chunking
+from src.commons.models.document_metadata.document_metadata import DocumentMetadata
+from src.chunking.process_document_logic import ProcessDocument
+from src.chunking.models.chunk_metadata import ChunkMetadata
+
+logging.basicConfig(level=logging.INFO)
 
 
-def chuncking_doc(
-    page: str, file_name: str, page_number: int, output_file="data/chunks/chunks.json"
-) -> ResponseLogic:
-    """
-    Function to chunk a document and save the chunks in a structured JSON format with unique page numbers.
+class ChunkingManager:
+    def __init__(self) -> None:
+        self.process_document = ProcessDocument()
 
-    Parameters:
-    - page (str): The text content of the page to chunk.
-    - file_name (str): Name of the file being processed.
-    - page_number (int): The page number being processed.
-    - output_file (str): The path to the JSON file where chunks will be saved.
+    def chunking_doc(self, page: str, metadata: DocumentMetadata) -> ResponseLogic:
+        """
+        Function to chunk a document
 
-    Returns:
-    - ResponseLogic: Object with the result of the operation.
-    """
-    resp: ResponseLogic
-    try:
-        # Configure the text splitter
-        text_splitter = CharacterTextSplitter(
-            chunk_size=200, chunk_overlap=50, separator=" ", strip_whitespace=True
-        )
+        Parameters
+        ----------
+        page : str
+            The text content of the page to chunk
+        metadata : DocumentMetadata
+            Document metadata
 
-        # Chunk the page text
-        chunks = text_splitter.split_text(page)
-
-        # Ensure the output directory exists
-        os.makedirs(os.path.dirname(output_file), exist_ok=True)
-
-        # Load existing data if the file already exists
-        if os.path.exists(output_file):
-            with open(output_file, "r", encoding="utf-8") as file:
-                existing_data = json.load(file)
-        else:
-            existing_data = {"documents": []}
-
-        # Check if the document already exists
-        document = next(
-            (
-                doc
-                for doc in existing_data["documents"]
-                if doc["file_name"] == file_name
-            ),
-            None,
-        )
-        if not document:
-            # If the document does not exist, add a new one
-            document = {"file_name": file_name, "paginas": []}
-            existing_data["documents"].append(document)
-
-        # Check if the page number already exists to avoid duplicates
-        if any(p["pagina"] == page_number for p in document["paginas"]):
-            raise ValueError(
-                f"Page {page_number} already exists in the JSON for {file_name}."
+        Returns
+        -------
+        ResponseLogic
+            Object with the result of the operation.
+        """
+        response_logic: ResponseLogic
+        try:
+            # Configure the text splitter
+            text_splitter = CharacterTextSplitter(
+                chunk_size=500, chunk_overlap=50, separator=" ", strip_whitespace=True
             )
+            # Chunk the page text
+            chunks = text_splitter.split_text(page)
+            chunks = Chunking(metadata=metadata, chunks=chunks)
 
-        # Add data for the current page
-        page_data = {"pagina": page_number, "chuncks": chunks}
-        document["paginas"].append(page_data)
+            response_logic = ResponseLogic(
+                response=chunks,
+                type_message=TypeMessage.INFO,
+                message=LOGG_MESSAGES["OK"],
+            )
+            return response_logic
+        except (ValueError, KeyError, json.JSONDecodeError) as e:
+            response_logic = ResponseLogic(
+                response=None,
+                type_message=TypeMessage.ERROR,
+                message=LOGG_MESSAGES["CHUNKING_ERROR"].format(error=e),
+            )
+        return response_logic
 
-        # Save the updated data back to the JSON file
-        with open(output_file, "w", encoding="utf-8") as file:
-            json.dump(existing_data, file, indent=4, ensure_ascii=False)
+    def save_chunks_file(self, chunking: any, file_name: str) -> ResponseLogic:
+        """
+        Function to save chunks into a file json
 
-        resp = ResponseLogic(
-            response=chunks,
-            typeMessage=TypeMessage.INFO,
-            message=f"Chunks for page {page_number} of '{file_name}' saved successfully in {output_file}.",
-        )
-        return resp
+        Parameters
+        ----------
+        chunking : list[Chunking]
+            list of chunks with metadata
+        file_name : str
+            file name of document
 
-    except (ValueError, KeyError, json.JSONDecodeError) as e:
-        resp = ResponseLogic(
+        Returns
+        -------
+        ResponseLogic
+            Object with the result of the operation.
+        """
+        message: str
+        data = {"data": chunking}
+        try:
+            file_manager = FileManager()
+            # get file name without extension
+            file_name = file_manager.get_file_name(file=file_name)
+            # directory path
+            dir_path: str = os.getenv("CHUNKING_FOLDER", "data/chunks")
+            # save document
+            file_manager.save_json_file(
+                dir_path=dir_path, file_name=f"{file_name}.json", data=data
+            )
+            message = LOGG_MESSAGES["CHUNKING_SAVE_JSON"]
+            type_message = TypeMessage.INFO
+        except (ValueError, KeyError, json.JSONDecodeError) as e:
+            message = LOGG_MESSAGES["CHUNKING_FAILED_SAVE_JSON"].format(error=e)
+            type_message = TypeMessage.ERROR
+        return ResponseLogic(
             response=None,
-            typeMessage=TypeMessage.ERROR,
-            message=LOGG_MESSAGES["CHUNCKING_ERROR"].format(error=e),
+            type_message=type_message,
+            message=message,
         )
 
-    return resp
+    def chunk_metadata(
+        self,
+        page_content: str,
+        no_serie: int,
+        metadata: DocumentMetadata,
+        file_name: str,
+    ) -> ChunkMetadata:
+        """
+        Function to generate chunk metadata
+
+        Parameters
+        ----------
+        chunk : str
+            chunk document
+        no_serie : int
+            number chunk
+        metadata : DocumentMetadata
+            Document metadata
+        file_name : str
+            File name of document
+
+        Returns
+        -------
+        ChunkMetadata
+            a chunk metadata
+        """
+        chunk_position = no_serie
+        chunk_keywords = self.process_document.getKeywords(document=page_content)
+        metadata_chunk = ChunkMetadata(
+            document_title=metadata.title,
+            keywords=chunk_keywords,
+            source=metadata.source,
+            author=metadata.author,
+            file_name=file_name,
+            chunk_position=chunk_position,
+            topic="",
+            page=metadata.page,
+            creation_date=metadata.creation_date,
+            page_content=page_content,
+            title=metadata.title,
+        )
+        return metadata_chunk

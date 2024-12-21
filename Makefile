@@ -1,6 +1,8 @@
 install:
 	# install commands
 	pip install -r requirements.txt
+start:
+	streamlit run main_app.py
 uninstall:
 	pip freeze --local | grep -v "^-e" | cut -d = -f 1 | xargs -n 1 pip uninstall -y
 format:
@@ -9,6 +11,8 @@ format:
 lint:
 	# flake8 or pylint
 	pylint --disable=R,C *.py ./src/**/*.py main_app.py
+flake:
+	flake8 ./src/**/*.py main_app.py
 test:
 	#test
 	python -m pytest -vv --cov=mylib test_logic.py
@@ -25,6 +29,8 @@ compose-logs:
 	docker compose -f docker-compose.yml logs -f
 compose-restart:
 	docker compose -f docker-compose.yml down && docker compose -f docker-compose.yml up --build -d
+compose-restart-app:
+	docker compose restart rag-app
 compose-clean:
 	docker compose -f docker-compose.yml down -v
 
