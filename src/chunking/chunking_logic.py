@@ -6,10 +6,10 @@ from src.commons.models.response_logic import ResponseLogic
 from src.commons.enums.type_message import TypeMessage
 from src.commons.logging_messages import LOGG_MESSAGES
 from src.commons.files_logic import FileManager
-from src.commons.models.chunking.chunking import Chunking
+from src.chunking.models.chunking import Chunking
 from src.commons.models.document_metadata.document_metadata import DocumentMetadata
 from src.chunking.process_document_logic import ProcessDocument
-from src.commons.models.chunking.chunk_metadata import ChunkMetadata
+from src.chunking.models.chunk_metadata import ChunkMetadata
 
 logging.basicConfig(level=logging.INFO)
 

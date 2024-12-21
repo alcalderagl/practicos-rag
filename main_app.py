@@ -34,7 +34,11 @@ pages = {
             title="Advance vector retriever",
             icon="📡",
         ),
-        st.Page("src/components/retrievers/compare_retrievers_app.py", title="Compare vector retrievers", icon="⚖️")
+        st.Page(
+            "src/components/retrievers/compare_retrievers_app.py",
+            title="Compare vector retrievers",
+            icon="⚖️",
+        ),
     ],
     "Benchmarks": [
         st.Page(

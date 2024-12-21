@@ -35,7 +35,7 @@ class Benchmark:
 
     def generate_questions(self, no_question: int) -> bool:
         qa_generation_prompt = ChatPromptTemplate.from_template(
-        """
+            """
         Your task is to write a factoid question and an answer given a context.
         Your factoid question should be answerable with a specific, concise piece of factual information from the context.
         Your factoid question should be formulated in the same style as questions users could ask in a search engine.
@@ -54,7 +54,7 @@ class Benchmark:
         )
 
         LLM_model = LageLangueModel()
-        
+
         ollama = LLM_model.connect_to_ollama()
 
         question_chain = (
@@ -90,8 +90,8 @@ class Benchmark:
         data = self._parse_qa(qas=faqs)
         self.save_qa(data=data)
         return True
-    
-    def save_qa(self, data:list[QuestionAnswer])-> None:
+
+    def save_qa(self, data: list[QuestionAnswer]) -> None:
         file_manager = FileManager()
         if len(data) > 0:
             file_manager.save_csv_file(
@@ -118,11 +118,11 @@ class Benchmark:
     def evaluate(self, evaluation_data: Evaluation):
         try:
             LLM_model = LageLangueModel()
-            ollama = LLM_model.connect_to_ollama()
+            # ollama = LLM_model.connect_to_ollama()
             vector_store_client = VectorStoreClient()
             vector_store = vector_store_client.create_vector_store()
             retriever = vector_store.as_retriever()
-            embeddings = OllamaEmbeddings(model="llama3")
+            # embeddings = OllamaEmbeddings(model="llama3")
             openai_embeddings = OpenAIEmbeddings(model="text-embedding-ada-002")
             api_key = os.getenv("OPENAI_API_KEY", "")
             openai_llm = ChatOpenAI(api_key=api_key, model="gpt-4-turbo-preview")
@@ -163,28 +163,30 @@ class Benchmark:
             logging.info(f"benchmark type {type(data)} OK {data}")
             dataset = Dataset.from_dict(data)
 
-            # result = evaluate(
-            #     dataset=dataset,
-            #     llm=openai_llm,
-            #     embeddings=openai_embeddings,
-            #     metrics=[
-            #         context_precision,
-            #         context_recall,
-            #         faithfulness,
-            #         answer_relevancy,
-            #     ],
-            # )
+            result = evaluate(
+                dataset=dataset,
+                llm=openai_llm,
+                embeddings=openai_embeddings,
+                metrics=[
+                    context_precision,
+                    context_recall,
+                    faithfulness,
+                    answer_relevancy,
+                ],
+            )
             # logging.info(f"benchmark OK {result.to_pandas()}")
 
-            # if isinstance(result, pd.DataFrame):
-            #     # Specify the local folder and file name
-            #     dir_path = "data/benchmark"
-            #     os.makedirs(dir_path, exist_ok=True)  # Create folder if it doesn't exist
-            #     file_path = os.path.join(dir_path, "evaluation.csv")
-            #     result.to_csv(file_path, index=False, encoding="utf-8")
+            if isinstance(result, pd.DataFrame):
+                # Specify the local folder and file name
+                dir_path = "data/benchmark"
+                os.makedirs(
+                    dir_path, exist_ok=True
+                )  # Create folder if it doesn't exist
+                file_path = os.path.join(dir_path, "evaluation.csv")
+                result.to_csv(file_path, index=False, encoding="utf-8")
 
-            # return result.to_pandas()
-            return "OK"
+            return result.to_pandas()
+            # return "OK"
         except (ValueError, KeyError) as e:
             logging.info("Error with benchmark %", e)
             return []

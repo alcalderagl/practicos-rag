@@ -8,7 +8,7 @@ from src.commons.logging_messages import LOGG_MESSAGES
 benchmark = Benchmark()
 st.title("Benchmark")
 
-if len(st.session_state["generated_questions"]) < 0:
+if len(st.session_state["generated_questions"]) > 0:
     questions = []
     ground_truths: list[str] = []
     for generated_question in st.session_state.generated_questions:
@@ -22,7 +22,7 @@ if len(st.session_state["generated_questions"]) < 0:
     if st.button("Evaluate retrievers"):
         with st.container():
             st.subheader("Initial RAG")
-            # evaluation_df = benchmark.evaluate(evaluation_data=evaluation)
+            evaluation_df = benchmark.evaluate(evaluation_data=evaluation)
             # st.dataframe(evaluation_df)
         with st.container():
             st.subheader("Advance RAG")

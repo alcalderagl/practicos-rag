@@ -1,17 +1,19 @@
 import streamlit as st
+from typing import List
+from langchain_core.documents import Document
 from src.chunking.chunking_logic import ChunkingManager
 from src.commons.models.response_logic import ResponseLogic
 from src.commons.enums.type_message import TypeMessage
 from src.commons.logging_messages import LOGG_MESSAGES
-from src.commons.models.loaders.loader_response import LoaderResponse
-from src.commons.models.chunking.chunk_metadata import ChunkMetadata
+from src.commons.models.response_logic import ResponseLogic
+from src.chunking.models.chunk_metadata import ChunkMetadata
 
 from src.chunking.chunking_logic import Chunking
 from src.commons.models.embedding.embedding import Embedding
 
 
 def chunking_expander(
-    cleaned_documents: list[str], loader_response: LoaderResponse
+    cleaned_documents: list[str], loader_response: ResponseLogic, file_name: str
 ) -> list[ChunkMetadata]:
     """
     Generates an expander component to display chunking information.
@@ -32,8 +34,6 @@ def chunking_expander(
     """
 
     chunking_manager = ChunkingManager()
-
-    file_name = loader_response.response.file_name
     with st.expander(
         LOGG_MESSAGES["APP_LABEL_CHUNKING_FILE"].format(file_name=file_name)
     ):
@@ -42,7 +42,8 @@ def chunking_expander(
         chunks_metadata: list[ChunkMetadata] = []
         # Iterate over the cleaned pages and their indices
         for i, page in enumerate(cleaned_documents, start=1):
-            metadata = loader_response.response.loader[i - 1].metadata
+            documents: List[Document] = loader_response.response
+            metadata = documents[i - 1].metadata
             # Call the `chunking_doc` function with the correct page number
             chunks: ResponseLogic = chunking_manager.chunking_doc(
                 page, metadata=metadata

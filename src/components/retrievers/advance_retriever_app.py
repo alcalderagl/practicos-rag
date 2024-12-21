@@ -1,5 +1,5 @@
 import streamlit as st
-from src.commons.models.chat_retriever.chat_history import ChatHistory
+from src.retrievers.models.chat_history import ChatHistory
 from src.embedding.embeddings_logic import EmbeddingManager
 from src.commons.enums.type_message import TypeMessage
 from src.retrievers.retrievers_logic import Retrievers
@@ -21,7 +21,9 @@ user_prompt = st.chat_input("Escribe tu consulta")
 # Procesar la consulta del usuario
 if user_prompt:
     rewrited_query = query_rewriter.rewriting(user_prompt)
-    st.session_state.advance_chat_history.append(ChatHistory(role="user", message=rewrited_query.rewriting_query))
+    st.session_state.advance_chat_history.append(
+        ChatHistory(role="user", message=rewrited_query.rewriting_query)
+    )
     st.session_state.advance_chat_history.append(ChatHistory(role="bot", message="..."))
 
 # Estilo para los mensajes del chat
@@ -67,7 +69,10 @@ if st.session_state.advance_chat_history:
                 unsafe_allow_html=True,
             )
         else:
-            if i == len(st.session_state.advance_chat_history) - 1 and chat.message == "...":
+            if (
+                i == len(st.session_state.advance_chat_history) - 1
+                and chat.message == "..."
+            ):
                 with st.spinner("..."):
                     top_k = 3
                     bot_response = retriever.advance_query_retrieval(
