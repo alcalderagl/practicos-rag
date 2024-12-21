@@ -32,4 +32,5 @@ LOGG_MESSAGES = {
     "OK": "OK",
     "EMBEDDING_SAVE_JSON": "Error while saving embedging file: {error}",
     "SUMMARIZATION_ERROR": "Ops!, there are a problem with summarization, {error}",
+    "SELF_QUERY_RETRIEVAL_CONTENT_DESCRIPTION": "A collection of regulations, laws, and standards governing the production, distribution, and quality of food and beverages in Mexico.",
 }
