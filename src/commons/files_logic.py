@@ -58,6 +58,21 @@ class FileManager:
             file.write(document)
 
     def save_json_file(self, dir_path: str, file_name: str, data: any) -> None:
+        """
+        Saves the given data as a JSON file in the specified directory.
+
+        Parameters
+        ----------
+        dir_path : str
+            The path of the directory where the JSON file will be saved. 
+            If the directory does not exist, it will be created.
+
+        file_name : str
+            The name of the JSON file to be created, including its extension (e.g., "file.json").
+
+        data : any
+            The data to be saved. This must be JSON-serializable.
+        """
         # create folder
         self.create_folder(dir_path=dir_path)
         file_path: str = self.generate_file_path(dir_path=dir_path, file_name=file_name)
@@ -68,6 +83,27 @@ class FileManager:
     def save_csv_file(
         self, dir_path: str, file_name: str, data: list[any], headers: list[str] = []
     ) -> None:
+        """
+        Saves the given data as a CSV file in the specified directory.
+
+        This function ensures the target directory exists, then creates a CSV file
+        with the given name and writes the provided data to it. Optionally, headers
+        can be included as the first row of the CSV file.
+
+        Parameters
+        ----------
+        dir_path : str
+            The path to the directory where the CSV file will be saved. 
+            If the directory does not exist, it will be created.
+        file_name : str
+            The name of the CSV file to be created, including the ".csv" extension.
+        data : list[any]
+            A list of data rows to be written to the CSV file. Each row should be 
+            a list or other iterable that matches the length of the headers, if provided.
+        headers : list[str], optional
+            A list of column headers to include as the first row in the CSV file. 
+            Defaults to an empty list, which means no headers will be included.
+        """
         # # create folder
         self.create_folder(dir_path=dir_path)
         file_path: str = self.generate_file_path(dir_path=dir_path, file_name=file_name)
@@ -99,6 +135,17 @@ class FileManager:
             writer.writerows(data)
 
     def read_csv(self, dir_path: str, file_name: str) -> list[any]:
+        """
+        Reads a CSV file from the specified directory and loads its content into a list of rows.
+
+        Parameters
+        ----------
+        dir_path : str
+            The path to the directory containing the CSV file.
+        file_name : str
+            The name of the CSV file to read, including the ".csv" extension.
+        """
+        
         items: list[str] = []
         file_path: str = self.generate_file_path(dir_path=dir_path, file_name=file_name)
         with open(file_path, "r", newline="", encoding="utf-8") as f:
