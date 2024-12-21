@@ -12,5 +12,6 @@ class ChatHistory(BaseModel):
     message : str
         The message sent by the person with the specified role.
     """
+
     role: str
     message: str

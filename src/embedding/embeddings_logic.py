@@ -50,7 +50,7 @@ class EmbeddingManager:
     def store_embeddings_in_qdrant(self, embeddings: list[Embedding]) -> None:
         """
         Store the serialized embeddings and corresponding texts into Qdrant.
-        
+
         Parameters
         ----------
         embeddings : list[Embedding]
