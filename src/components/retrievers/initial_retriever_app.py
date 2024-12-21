@@ -1,5 +1,5 @@
 import streamlit as st
-from src.commons.models.chat_retriever.chat_history import ChatHistory
+from src.retrievers.models.chat_history import ChatHistory
 from src.embedding.embeddings_logic import EmbeddingManager
 from src.commons.enums.type_message import TypeMessage
 from src.retrievers.retrievers_logic import Retrievers
