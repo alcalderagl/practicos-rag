@@ -164,9 +164,10 @@ class Benchmark:
             vector_store = vector_store_client.create_vector_store()
             retriever = vector_store.as_retriever()
             # embeddings = OllamaEmbeddings(model="llama3")
-            openai_embeddings = OpenAIEmbeddings(model="text-embedding-ada-002")
+            # openai_embeddings = OpenAIEmbeddings(model="text-embedding-ada-002")
             api_key = os.getenv("OPENAI_API_KEY", "")
-            openai_llm = ChatOpenAI(api_key=api_key, model="gpt-4-turbo-preview")
+            # openai_llm = ChatOpenAI(api_key=api_key, model="gpt-4-turbo-preview")
+            openai_llm = LLM_model.connect_chat_openAI()
 
             logging.info(f"api_key -> {api_key}")
 
@@ -202,12 +203,12 @@ class Benchmark:
             # Convert dict to dataset
             data = evaluation_data.model_dump()
             logging.info(f"benchmark type {type(data)} OK {data}")
-            dataset = Dataset(data)
+            dataset = Dataset.from_dict(data)
 
             result = evaluate(
                 dataset=dataset,
                 llm=openai_llm,
-                embeddings=openai_embeddings,
+                embeddings=vector_store_client.embedding_model,
                 metrics=[
                     context_precision,
                     context_recall,
