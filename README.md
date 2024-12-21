@@ -2,6 +2,9 @@
 
 Welcome to the **Building an End-to-End Retrieval-Augmented Generation System** repository. This repository is designed to guide you through the process of creating a complete Retrieval-Augmented Generation (RAG) system from scratch, following a structured curriculum.
 
+
+presentacion https://docs.google.com/presentation/d/1ZCYN4eOQmwh1axoAprV7S3lnt7KKk2flkXBLmKPJIGs/edit?usp=sharing
+
 ## Setup Instructions
 
 To get started with the course:
