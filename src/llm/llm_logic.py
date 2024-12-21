@@ -22,20 +22,31 @@ class LageLangueModel:
         # gpt-4-turbo-preview
         self.openai_model = os.getenv("OPENAI_MODEL", "gpt-4o-mini")
 
-        
     def connect_to_ollama(self) -> OllamaLLM:
+        """
+        Establishes a connection to the Ollama LLM model.
+
+        Returns
+        -------
+        OllamaLLM
+            An instance of the Ollama LLM model connected to the specified base URL.
+        """
         llm = OllamaLLM(
             model="llama3", base_url=f"http://{self.ollama_host}:{self.ollama_port}"
         )
         return llm
-    
+
     def connect_chat_openAI(self) -> ChatOpenAI:
+        """
+        Establishes a connection to the OpenAI Chat API.
+
+        Returns
+        -------
+        ChatOpenAI
+            An instance of the ChatOpenAI model connected using the provided API key and model configuration.
+        """
         openai_llm = ChatOpenAI(api_key=self.api_key, model=self.openai_model)
         return openai_llm
-    
-    def connect_chat_ollama(self):
-        pass
-    
 
     def prompter(self, input_variables: list[str], template: str) -> str:
         """
