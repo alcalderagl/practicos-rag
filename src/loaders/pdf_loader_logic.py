@@ -1,12 +1,13 @@
-from langchain_community.document_loaders import PyPDFLoader
-from src.commons.models.loaders.loader import Loader
-from PyPDF2 import PdfReader
 import logging
+from typing import List
+from langchain_community.document_loaders import PyPDFLoader
+from langchain_core.documents import Document
+from PyPDF2 import PdfReader
 
 logging.basicConfig(level=logging.INFO)
 
 
-def PDFLoader(file_path: str):
+def PDFLoader(file_path: str)->List[Document]:
     """
     Load document into PyPDFLoader langchain library
 
@@ -17,8 +18,8 @@ def PDFLoader(file_path: str):
 
     Returns
     -------
-    LoaderModel
-        returns an array of LoaderModel
+    List[Document]
+        returns a list of Documents
     """
     loader = PyPDFLoader(file_path)
     document = loader.load_and_split()
@@ -33,30 +34,9 @@ def PDFLoader(file_path: str):
                 "creation_date": metadata.get("/CreationDate", ""),
             }
         )
-    pages = _PDFPages(document)
+    # pages = _PDFPages(document)
     logging.info(metadata)
-    return pages
-
-
-def _PDFPages(pages: any):
-    """
-    Load document into PDFLoader langchain library
-
-    Parameters
-    ----------
-    pages : any
-        Directory path
-
-    Returns
-    -------
-    LoaderModel
-        this returns an array of LoaderModel
-    """
-    pdfPageResp = [
-        Loader(page_content=page.page_content, metadata=page.metadata) for page in pages
-    ]
-    return pdfPageResp
-
+    return document
 
 def _extract_metadata(file_path: str):
     """
