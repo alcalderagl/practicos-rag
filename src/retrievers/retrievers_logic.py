@@ -16,7 +16,6 @@ from src.benchmark.benchmark_logic import Benchmark
 from src.benchmark.models.question_answer import QuestionAnswer
 
 
-
 logging.basicConfig(level=logging.INFO)
 
 
@@ -183,4 +182,4 @@ class Retrievers:
         except (ValueError, KeyError) as e:
             # if there are any error then show this data
             logging.info(f"Error with initial query retrieval: {e}")
-        return response_logic    
+        return response_logic

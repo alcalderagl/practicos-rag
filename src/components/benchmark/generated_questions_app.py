@@ -20,7 +20,6 @@ def initialized_benchmark() -> ResponseLogic:
 
 
 def generate_question(no_question: int) -> ResponseLogic:
-    # if st.button(btn_label):
     # generate questions
     generated_questions = benchmark.generate_questions(no_question=no_question)
     if generated_questions:

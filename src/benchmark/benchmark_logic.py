@@ -2,6 +2,7 @@ from datasets import Dataset
 import random
 import os
 import logging
+from typing import List
 from langchain.schema.runnable import RunnablePassthrough
 from langchain.schema.output_parser import StrOutputParser
 from langchain.prompts import PromptTemplate, ChatPromptTemplate
@@ -34,8 +35,21 @@ class Benchmark:
         pass
 
     def generate_questions(self, no_question: int) -> bool:
-        qa_generation_prompt = ChatPromptTemplate.from_template(
         """
+        Generates factoid-style questions and answers based on sampled document contexts
+        from a vector store.
+
+        Parameters
+        ----------
+        no_question (int):
+            The number of questions to generate.
+
+        Returns
+        ----------
+            bool: Always returns True upon successful execution.
+        """
+        qa_generation_prompt = ChatPromptTemplate.from_template(
+            """
         Your task is to write a factoid question and an answer given a context.
         Your factoid question should be answerable with a specific, concise piece of factual information from the context.
         Your factoid question should be formulated in the same style as questions users could ask in a search engine.
@@ -54,13 +68,14 @@ class Benchmark:
         )
 
         LLM_model = LageLangueModel()
-        
-        ollama = LLM_model.connect_to_ollama()
+
+        # ollama = LLM_model.connect_to_ollama()
+        openai_llm = LLM_model.connect_chat_openAI()
 
         question_chain = (
             {"context": RunnablePassthrough()}
             | qa_generation_prompt
-            | ollama.llm
+            | openai_llm
             | StrOutputParser()
         )
 
@@ -84,14 +99,23 @@ class Benchmark:
             for sampled_context in sampled_docs_processed
         ]
         logging.info(f"questions => {faqs}")
-        file_manager = FileManager()
-        # file_manager.save_json_file("data/questions/", "questions", faqs)
-
         data = self._parse_qa(qas=faqs)
         self.save_qa(data=data)
         return True
-    
-    def save_qa(self, data:list[QuestionAnswer])-> None:
+
+    def save_qa(self, data: List[QuestionAnswer]) -> None:
+        """
+        Saves a list of question-and-answer pairs to a CSV file.
+
+        Parameters
+        ----------
+            data : (List[QuestionAnswer])
+            A list of QuestionAnswer objects to be saved. Each object contains a question and its corresponding answer.
+
+        Returns
+        ----------
+            None
+        """
         file_manager = FileManager()
         if len(data) > 0:
             file_manager.save_csv_file(
@@ -101,8 +125,23 @@ class Benchmark:
                 headers=["question", "answer"],
             )
 
-    def _parse_qa(self, qas: list[str]) -> list[any]:
-        parsed_data: list[any] = []
+    def _parse_qa(self, qas: List[str]) -> List[QuestionAnswer]:
+        """
+        Parses a list of factoid question-answer strings and converts them into structured QuestionAnswer objects.
+
+        Parameters
+        ----------
+        qas : (List[str])
+                A list of strings where each string contains a factoid question and its corresponding answer.
+                            The format of each string should be:
+                            "Factoid question: <question_text> Answer: <answer_text>"
+
+        Returns
+        ----------
+        List[QuestionAnswer]:
+            A list of parsed QuestionAnswer objects, each containing a question and an answer.
+        """
+        parsed_data: List[QuestionAnswer] = []
         try:
             for qa in qas:
                 question, answer = qa.split("Answer: ")
@@ -111,6 +150,8 @@ class Benchmark:
                 parsed_data.append(
                     QuestionAnswer(question=question, answer=answer).model_dump()
                 )
+            logging.info(f"la question: {parsed_data}")
+            return parsed_data
         except (ValueError, KeyError) as e:
             logging.info(f"Error with parsed questions & answers {e}")
         return parsed_data
@@ -118,7 +159,7 @@ class Benchmark:
     def evaluate(self, evaluation_data: Evaluation):
         try:
             LLM_model = LageLangueModel()
-            #ollama = LLM_model.connect_to_ollama()
+            # ollama = LLM_model.connect_to_ollama()
             vector_store_client = VectorStoreClient()
             vector_store = vector_store_client.create_vector_store()
             retriever = vector_store.as_retriever()
@@ -179,7 +220,9 @@ class Benchmark:
             if isinstance(result, pd.DataFrame):
                 # Specify the local folder and file name
                 dir_path = "data/benchmark"
-                os.makedirs(dir_path, exist_ok=True)  # Create folder if it doesn't exist
+                os.makedirs(
+                    dir_path, exist_ok=True
+                )  # Create folder if it doesn't exist
                 file_path = os.path.join(dir_path, "evaluation.csv")
                 result.to_csv(file_path, index=False, encoding="utf-8")
 

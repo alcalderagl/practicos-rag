@@ -64,7 +64,7 @@ class FileManager:
         Parameters
         ----------
         dir_path : str
-            The path of the directory where the JSON file will be saved. 
+            The path of the directory where the JSON file will be saved.
             If the directory does not exist, it will be created.
 
         file_name : str
@@ -93,15 +93,15 @@ class FileManager:
         Parameters
         ----------
         dir_path : str
-            The path to the directory where the CSV file will be saved. 
+            The path to the directory where the CSV file will be saved.
             If the directory does not exist, it will be created.
         file_name : str
             The name of the CSV file to be created, including the ".csv" extension.
         data : list[any]
-            A list of data rows to be written to the CSV file. Each row should be 
+            A list of data rows to be written to the CSV file. Each row should be
             a list or other iterable that matches the length of the headers, if provided.
         headers : list[str], optional
-            A list of column headers to include as the first row in the CSV file. 
+            A list of column headers to include as the first row in the CSV file.
             Defaults to an empty list, which means no headers will be included.
         """
         # # create folder
@@ -145,7 +145,7 @@ class FileManager:
         file_name : str
             The name of the CSV file to read, including the ".csv" extension.
         """
-        
+
         items: list[str] = []
         file_path: str = self.generate_file_path(dir_path=dir_path, file_name=file_name)
         with open(file_path, "r", newline="", encoding="utf-8") as f:

@@ -18,7 +18,7 @@ option = st.selectbox(
     "Selected a vector retrieval?",
     ("🧩Naive", "📡Advance", "⚖️Compare"),
     key="vector_retrieval_option",
-    on_change=lambda: st.session_state.update({"chat_history": []}) 
+    on_change=lambda: st.session_state.update({"chat_history": []}),
 )
 
 
@@ -31,14 +31,23 @@ user_prompt = st.chat_input("Write your question")
 
 # Procesar la consulta del usuario
 if user_prompt:
-    if option=="📡Advance":
+    if option == "📡Advance":
         rewrited_query = query_rewriter.rewriting(user_prompt).rewriting_query
-        st.session_state.chat_history.append(ChatHistory(role="user", message=rewrited_query))
+        st.session_state.chat_history.append(
+            ChatHistory(role="user", message=rewrited_query)
+        )
     elif option == "🧩Naive":
-        st.session_state.chat_history.append(ChatHistory(role="user", message=user_prompt))
+        st.session_state.chat_history.append(
+            ChatHistory(role="user", message=user_prompt)
+        )
     else:
         rewrited_query = query_rewriter.rewriting(user_prompt).rewriting_query
-        st.session_state.chat_history.append(ChatHistory(role="user", message=f"user question ->{user_prompt} <br/> rewrited question -> {rewrited_query}"))
+        st.session_state.chat_history.append(
+            ChatHistory(
+                role="user",
+                message=f"user question ->{user_prompt} <br/> rewrited question -> {rewrited_query}",
+            )
+        )
     st.session_state.chat_history.append(ChatHistory(role="bot", message="..."))
 
 # Estilo para los mensajes del chat
@@ -75,16 +84,19 @@ st.markdown(
     unsafe_allow_html=True,
 )
 
-def initial_retrieval(user_prompt:str)->str:
+
+def initial_retrieval(user_prompt: str) -> str:
     top_k = 3
-    bot_response = retriever.initial_query_retrieval(query_text=user_prompt, top_k=top_k)
+    bot_response = retriever.initial_query_retrieval(
+        query_text=user_prompt, top_k=top_k
+    )
     if bot_response.type_message == TypeMessage.INFO:
         best_resp = []
-        response:List[types.ScoredPoint] = bot_response.response
+        response: List[types.ScoredPoint] = bot_response.response
         for index, resp in enumerate(response):
             page_content = resp.payload.get("page_content", "")
             best_resp.append(
-                f"<span class=\"no-response\">Resultado {index + 1} - {round(resp.score * 100, 2) }%</span> <br/> {page_content} <br/> <br/>"
+                f'<span class="no-response">Resultado {index + 1} - {round(resp.score * 100, 2) }%</span> <br/> {page_content} <br/> <br/>'
             )
         return (
             f'<span class="no-response">Te comparto los {top_k} resultados similares a tu pregunta:</span><br/><br/>'
@@ -92,16 +104,16 @@ def initial_retrieval(user_prompt:str)->str:
         )
     else:
         return bot_response.message
-    
-def advance_retrieval(user_prompt:str)->str:
-    bot_response = retriever.advance_query_retrieval(
-        query=user_prompt
-    )
+
+
+def advance_retrieval(user_prompt: str) -> str:
+    bot_response = retriever.advance_query_retrieval(query=user_prompt)
     if bot_response.type_message == TypeMessage.INFO:
         return bot_response.response
     else:
-        return bot_response.message    
-    
+        return bot_response.message
+
+
 # Mostrar el historial del chat
 if st.session_state.chat_history:
     for i, chat in enumerate(st.session_state.chat_history):
@@ -120,14 +132,15 @@ if st.session_state.chat_history:
                     else:
                         # compare
                         naive_bot_response = initial_retrieval(user_prompt=user_prompt)
-                        advance_bot_response = advance_retrieval(user_prompt=rewrited_query)
+                        advance_bot_response = advance_retrieval(
+                            user_prompt=rewrited_query
+                        )
                         chat.message = (
-                            naive_bot_response +
-                            '<br/> <span class="no-response">Respuesta resumida</span><br/>'
+                            naive_bot_response
+                            + '<br/> <span class="no-response">Respuesta resumida</span><br/>'
                             + advance_bot_response
                         )
             st.markdown(
                 f'<div class="chat-container"><div class="bot-message">{chat.message}</div></div>',
                 unsafe_allow_html=True,
             )
-
