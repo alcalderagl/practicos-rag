@@ -31,4 +31,5 @@ LOGG_MESSAGES = {
     "RETRIEVER_SUCCESS": "Retriever has return the following documents",
     "OK": "OK",
     "EMBEDDING_SAVE_JSON": "Error while saving embedging file: {error}",
+    "SUMMARIZATION_ERROR": "Ops!, there are a problem with summarization, {error}",
 }

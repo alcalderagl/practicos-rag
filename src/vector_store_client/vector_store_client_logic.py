@@ -7,6 +7,7 @@ from src.commons.enums.type_message import TypeMessage
 from src.commons.logging_messages import LOGG_MESSAGES
 from src.commons.models.response_logic import ResponseLogic
 from langchain_openai import OpenAIEmbeddings
+
 # from langchain_ollama import OllamaEmbeddings
 # from langchain.embeddings import HuggingFaceEmbeddings
 logging.basicConfig(level=logging.INFO)
