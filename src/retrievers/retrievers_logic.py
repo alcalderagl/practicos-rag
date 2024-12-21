@@ -14,6 +14,7 @@ from src.reranking.reranking_logic import Reranking
 from src.summarization.summarization_logic import Summarization
 from src.benchmark.benchmark_logic import Benchmark
 from src.benchmark.models.question_answer import QuestionAnswer
+from qdrant_client.conversions import common_types as types
 
 
 logging.basicConfig(level=logging.INFO)
@@ -21,49 +22,62 @@ logging.basicConfig(level=logging.INFO)
 
 class Retrievers:
     def __init__(self) -> None:
-        self.model_embedding_name = os.getenv(
-            "MODEL_EMBEDDING", "distiluse-base-multilingual-cased-v2"
-        )
+        pass
 
     def advance_query_retrieval(self, query: str) -> ResponseLogic:
+        """
+        Performs an advanced query retrieval process, summarizes the results, and saves the information if successful.
 
+        Parameters
+        ----------
+        query : str
+            The user query for which to retrieve and summarize relevant documents.
+
+        Returns
+        -------
+        ResponseLogic
+            A ResponseLogic object containing the summarized answer or error message.
+        """
         response_logic = ResponseLogic(
-            response=["No cuento con la informacion"],
-            message="No cuento con la informacion",
+            response="",
+            message=LOGG_MESSAGES["RETRIEVAL_DONT_HAVE_CONTEXT"],
             type_message=TypeMessage.ERROR,
         )
         try:
+            # Perform self-query retrieval using the provided query
             query_retrieval_docs = self._self_query_retrieval(query=query)
+            # Check if documents are retrieved
             if len(query_retrieval_docs) > 0:
-                reranking = Reranking()
-                ranked_docs = reranking.reranker(query, query_retrieval_docs)
-                if len(ranked_docs) > 0:
-                    # docs = []
-                    # for doc in ranked_docs:
-                    #     doc_txt = doc.document.text
-                    #     docs.append({"page_content":doc_txt})
-                    # response_logic.response = docs
-                    summarization = Summarization()
-                    summarized_answer = summarization.summarize(
-                        query=query, ranked_results=query_retrieval_docs
-                    )
-                    if summarized_answer != "":
-                        benchmark = Benchmark()
-                        response_logic.type_message = TypeMessage.INFO
-                        response_logic.response = summarized_answer
-                        qa = QuestionAnswer(
-                            question=query, answer=summarized_answer
-                        ).model_dump()
-                        benchmark.save_qa(data=[qa])
-                    else:
-                        response_logic.response = ""
-                        response_logic.message = "THERE ARE NOT A SUMMARIZATION ANSWER"
+                # instance of summarization
+                summarization = Summarization()
+                # Perform summarization on the retrieved documents
+                summarized_answer = summarization.summarize(
+                    query=query, retrieval_docs=query_retrieval_docs
+                )
+
+                # Check if summarization is successful
+                if summarized_answer != "":
+                    benchmark = Benchmark()
+                    response_logic.type_message = TypeMessage.INFO
+                    response_logic.response = summarized_answer
+                    # Save the summarized answer along with the query in the benchmark
+                    qa = QuestionAnswer(
+                        question=query, answer=summarized_answer
+                    ).model_dump()
+                    benchmark.save_qa(data=[qa])
                 else:
-                    response_logic.message = "THERE WAS A PROBLEM WITH RERANKIN"
+                    response_logic.message = LOGG_MESSAGES[
+                        "RETRIEVAL_FAILED_TO_SUMMARIZED"
+                    ]
+                    response_logic.type_message = TypeMessage.INFO
+                    response_logic.response = self._generate_advance_bot_response(
+                        documents=query_retrieval_docs
+                    )
             else:
-                response_logic.message = "DOCUMENTS NOT FOUND FROM SELF QUERY RETRIEVAL"
+                response_logic.message = LOGG_MESSAGES["SELF_QUERY_RETRIEVAL_FAILED"]
 
         except (ValueError, KeyError) as e:
+            # Log any errors encountered during the process
             logging.info(f"Error with advance query retrieval: {e}")
         return response_logic
 
@@ -146,8 +160,8 @@ class Retrievers:
         """
 
         response_logic = ResponseLogic(
-            response=["OcurrNo cuento con la informacion"],
-            message="No cuento con la informacion",
+            response=[],
+            message=LOGG_MESSAGES["RETRIEVAL_DONT_HAVE_CONTEXT"],
             type_message=TypeMessage.ERROR,
         )
         try:
@@ -166,9 +180,90 @@ class Retrievers:
             # modify response logic to a success response logic
             response_logic.message = LOGG_MESSAGES["OK"]
             response_logic.type_message = TypeMessage.INFO
-            response_logic.response = results
+            response_logic.response = self._generate_initial_bot_response(
+                score_points=results, top_k=top_k
+            )
             logging.info(f"initial query retrieval: {response_logic}")
         except (ValueError, KeyError) as e:
             # if there are any error then show this data
             logging.info(f"Error with initial query retrieval: {e}")
         return response_logic
+
+    def _generate_initial_bot_response(
+        self, score_points: List[types.ScoredPoint], top_k: int
+    ) -> str:
+        """
+        Generates an HTML response for the top-k similar results based on score points.
+
+        Parameters
+        ----------
+        score_points : List[types.ScoredPoint]
+            A list of ScoredPoint objects containing scores and associated page content.
+        top_k : int
+            The number of top results to include in the response.
+
+        Returns
+        -------
+        str
+            An HTML string containing the formatted top-k results.
+        """
+        response: List[str] = []
+        # Creating a list of response strings for the top-k results
+        for index, score_point in enumerate(score_points):
+            response.append(
+                f"""
+            <span class=\"no-response\">Resultado {index + 1} - {round(score_point.score * 100, 2) }%</span> 
+            <br/> 
+            <p>{score_point.payload.get("page_content", "")}</p>
+            <br/>
+            """
+            )
+
+        # Constructing the final template with all responses
+        template = f"""
+            <span class="no-response">Te comparto los {top_k} resultados similares a tu pregunta:</span>
+            <br/>
+            <br/>
+        """ + " ".join(
+            response
+        )
+        return template
+
+    def _generate_advance_bot_response(self, documents: List[Document]) -> str:
+        """
+        Generates an HTML response for the top-k similar results based on document scores.
+
+        Parameters
+        ----------
+        documents : List[Document]
+            A list of Document objects containing page content and associated scores.
+        top_k : int
+            The number of top results to include in the response.
+
+        Returns
+        -------
+        str
+            An HTML string containing the formatted top-k results.
+        """
+        response: List[str] = []
+        # Creating a list of response strings for the top-k results
+        for index, doc in enumerate(documents):
+            response.append(
+                f"""
+            <span class=\"no-response\">Resultado {index + 1} - {round(doc.metadata.get("score", 0) * 100, 2) }%</span> 
+            <br/> 
+            <p>{doc.page_content}</p>
+            <br/>
+            """
+            )
+
+        # Constructing the final template with all responses
+        template = f"""
+            <span class="no-response">Te comparto los {len(response)} resultados similares a tu pregunta:</span>
+            <br/>
+            <br/>
+        """ + " ".join(
+            response
+        )
+
+        return template

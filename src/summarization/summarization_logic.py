@@ -1,8 +1,11 @@
 import logging
+from typing import List
 from langchain_core.prompts import ChatPromptTemplate
+from langchain_core.documents import Document
 from langchain.chains.combine_documents import create_stuff_documents_chain
 from src.llm.llm_logic import LageLangueModel
 from src.commons.logging_messages import LOGG_MESSAGES
+
 
 logging.basicConfig(level=logging.INFO)
 
@@ -11,7 +14,7 @@ class Summarization:
     def __init__(self):
         pass
 
-    def summarize(self, query: str, ranked_results: any) -> str:
+    def summarize(self, query: str, retrieval_docs: List[Document]) -> str:
         """
         Summarizes content based on a query and context using a language model.
 
@@ -19,8 +22,8 @@ class Summarization:
         ----------
         query : str
             The query string that provides the focus for the summary.
-        ranked_results : any
-            The context or ranked results to be summarized.
+        retrieval_docs : List[Document]
+            The context or retrieval docs to be summarized.
 
         Returns
         -------
@@ -48,7 +51,7 @@ class Summarization:
             chain_summarize = create_stuff_documents_chain(opeAI_llm, prompt)
             # Invoke the summarization chain with the context and query
             summary = chain_summarize.invoke(
-                {"context": ranked_results, "query": query}
+                {"context": retrieval_docs, "query": query}
             )
             logging.info(f"summarized docs {summary}")
             # return the generated summary

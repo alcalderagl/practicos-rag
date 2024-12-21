@@ -4,6 +4,9 @@ from langchain.retrievers.self_query.base import SelfQueryRetriever
 
 
 class CustomSelfQueryRetriever(SelfQueryRetriever):
+    def __init__() -> None:
+        pass
+
     def _get_docs_with_query(
         self, query: str, search_kwargs: Dict[str, Any]
     ) -> List[Document]:
