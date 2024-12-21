@@ -1,5 +1,5 @@
 from pydantic import BaseModel
-from src.commons.models.chunking.chunk_metadata import ChunkMetadata
+from src.chunking.models.chunk_metadata import ChunkMetadata
 from typing import Optional
 
 

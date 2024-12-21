@@ -3,11 +3,10 @@ import json
 import logging
 from uuid import uuid4
 from src.vector_store_client.vector_store_client_logic import VectorStoreClient
+from src.embedding.models.embedding import Embedding
 from src.commons.files_logic import FileManager
-from src.commons.models.response_logic import ResponseLogic
-from src.commons.enums.type_message import TypeMessage
-from src.commons.models.chunking.chunk_metadata import ChunkMetadata
-from src.commons.models.embedding.embedding import Embedding
+from src.chunking.models.chunk_metadata import ChunkMetadata
+
 
 logging.basicConfig(level=logging.INFO)
 
@@ -17,7 +16,19 @@ class EmbeddingManager:
         pass
 
     def set_embedding(self, chunks_metadata: list[ChunkMetadata]) -> list[Embedding]:
-        """Generate embeddings from texts and return them."""
+        """
+        Generate embeddings from text chunks and return them as a list of Embedding objects.
+
+        Parameters
+        ----------
+        chunks_metadata : list[ChunkMetadata]
+            A list of ChunkMetadata objects containing text content to be embedded.
+
+        Returns
+        -------
+        list[Embedding]
+            A list of Embedding objects generated from the provided text chunks.
+        """
         try:
             # Inicializar the vector store client
             vector_store_client = VectorStoreClient()
@@ -37,23 +48,50 @@ class EmbeddingManager:
             return []
 
     def store_embeddings_in_qdrant(self, embeddings: list[Embedding]) -> None:
-        """Store the embeddings and corresponding texts into Qdrant."""
+        """
+        Store the serialized embeddings and corresponding texts into Qdrant.
+        
+        Parameters
+        ----------
+        embeddings : list[Embedding]
+            A list of embedding objects that need to be stored.
+
+        Returns
+        -------
+        None
+        """
         # Upload embeddings to Qdrant
         try:
+            # Instance of VectorStoreClient
             vector_store_client = VectorStoreClient()
+            # Serialize each embedding object into a dictionary using model_dump()
             embeddings = [embedding.model_dump() for embedding in embeddings]
-            logging.info(embeddings)
+            # Upsert (insert or update) the embeddings into the Qdrant collection
             vector_store_client.client.upsert(
                 collection_name=vector_store_client.collection_name,
                 points=embeddings,
             )
+            logging.info(f"embeddings saved into qdrant: {embeddings[:3]}")
         except (ValueError, KeyError) as e:
-            logging.info("Error when storing embeddings into qdrant %", e)
+            logging.info(f"Error when saving embeddings into qdrant {e}")
 
     def save_embeddings_to_file(
         self, embeddings: list[Embedding], file_name: str
     ) -> None:
-        """Save embeddings to a local file (json)"""
+        """
+        Save embeddings to a local JSON file.
+
+        Parameters
+        ----------
+        embeddings : list[Embedding]
+            A list of embedding objects to be saved.
+        file_name : str
+            The desired name of the JSON file where embeddings will be saved.
+
+        Returns
+        -------
+        None
+        """
         data = {"data": [embedding.model_dump() for embedding in embeddings]}
         try:
             file_manager = FileManager()
@@ -66,4 +104,4 @@ class EmbeddingManager:
                 dir_path=dir_path, file_name=f"{file_name}.json", data=data
             )
         except (ValueError, KeyError, json.JSONDecodeError) as e:
-            logging.info(f"error saving the embedidng {e}")
+            logging.info(f"error saving the embedidng: {e}")
