@@ -8,7 +8,6 @@ from src.commons.logging_messages import LOGG_MESSAGES
 from src.commons.enums.type_message import TypeMessage
 from src.components.loader.cleaning_expander_app import cleaning_expander
 from src.components.loader.chunking_expander_app import chunking_expander
-from src.commons.models.embedding.embedding import Embedding
 
 
 # APP TITLE
@@ -88,10 +87,10 @@ for uploaded_file in uploaded_files:
                     embeddings = embedding_manager.set_embedding(
                         chunks_metadata=chunks_metadata
                     )
-                    # embedding_manager.store_embeddings_in_qdrant(embeddings=embeddings)
-                    # embedding_manager.save_embeddings_to_file(
-                    #     embeddings=embeddings, file_name=file_name
-                    # )
+                    embedding_manager.store_embeddings_in_qdrant(embeddings=embeddings)
+                    embedding_manager.save_embeddings_to_file(
+                        embeddings=embeddings, file_name=file_name
+                    )
                 elif loader_response.type_message == TypeMessage.ERROR:
                     # otherwise show an error message
                     st.error(loader_response.message, icon="🚨")

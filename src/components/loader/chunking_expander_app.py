@@ -7,9 +7,7 @@ from src.commons.enums.type_message import TypeMessage
 from src.commons.logging_messages import LOGG_MESSAGES
 from src.commons.models.response_logic import ResponseLogic
 from src.chunking.models.chunk_metadata import ChunkMetadata
-
 from src.chunking.chunking_logic import Chunking
-from src.commons.models.embedding.embedding import Embedding
 
 
 def chunking_expander(

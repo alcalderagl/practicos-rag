@@ -14,7 +14,7 @@ from src.reranking.reranking_logic import Reranking
 from src.summarization.summarization_logic import Summarization
 from src.benchmark.benchmark_logic import Benchmark
 from src.benchmark.models.question_answer import QuestionAnswer
-from qdrant_client.conversions import common_types as types
+
 
 
 logging.basicConfig(level=logging.INFO)
@@ -70,9 +70,7 @@ class Retrievers:
                         "RETRIEVAL_FAILED_TO_SUMMARIZED"
                     ]
                     response_logic.type_message = TypeMessage.INFO
-                    response_logic.response = self._generate_advance_bot_response(
-                        documents=query_retrieval_docs
-                    )
+                    response_logic.response = query_retrieval_docs
             else:
                 response_logic.message = LOGG_MESSAGES["SELF_QUERY_RETRIEVAL_FAILED"]
 
@@ -111,7 +109,7 @@ class Retrievers:
             ]
 
             # Description of the document content
-            document_content_description = LOGG_MESSAGES["SELF_QUERY_RETRIEVAL_INFO"]
+            document_content_description = "A collection of regulations, laws, and standards governing the production, distribution, and quality of food and beverages in Mexico"
 
             # Initialize structured query translator
             # TO DO
@@ -180,90 +178,9 @@ class Retrievers:
             # modify response logic to a success response logic
             response_logic.message = LOGG_MESSAGES["OK"]
             response_logic.type_message = TypeMessage.INFO
-            response_logic.response = self._generate_initial_bot_response(
-                score_points=results, top_k=top_k
-            )
+            response_logic.response = results
             logging.info(f"initial query retrieval: {response_logic}")
         except (ValueError, KeyError) as e:
             # if there are any error then show this data
             logging.info(f"Error with initial query retrieval: {e}")
-        return response_logic
-
-    def _generate_initial_bot_response(
-        self, score_points: List[types.ScoredPoint], top_k: int
-    ) -> str:
-        """
-        Generates an HTML response for the top-k similar results based on score points.
-
-        Parameters
-        ----------
-        score_points : List[types.ScoredPoint]
-            A list of ScoredPoint objects containing scores and associated page content.
-        top_k : int
-            The number of top results to include in the response.
-
-        Returns
-        -------
-        str
-            An HTML string containing the formatted top-k results.
-        """
-        response: List[str] = []
-        # Creating a list of response strings for the top-k results
-        for index, score_point in enumerate(score_points):
-            response.append(
-                f"""
-            <span class=\"no-response\">Resultado {index + 1} - {round(score_point.score * 100, 2) }%</span> 
-            <br/> 
-            <p>{score_point.payload.get("page_content", "")}</p>
-            <br/>
-            """
-            )
-
-        # Constructing the final template with all responses
-        template = f"""
-            <span class="no-response">Te comparto los {top_k} resultados similares a tu pregunta:</span>
-            <br/>
-            <br/>
-        """ + " ".join(
-            response
-        )
-        return template
-
-    def _generate_advance_bot_response(self, documents: List[Document]) -> str:
-        """
-        Generates an HTML response for the top-k similar results based on document scores.
-
-        Parameters
-        ----------
-        documents : List[Document]
-            A list of Document objects containing page content and associated scores.
-        top_k : int
-            The number of top results to include in the response.
-
-        Returns
-        -------
-        str
-            An HTML string containing the formatted top-k results.
-        """
-        response: List[str] = []
-        # Creating a list of response strings for the top-k results
-        for index, doc in enumerate(documents):
-            response.append(
-                f"""
-            <span class=\"no-response\">Resultado {index + 1} - {round(doc.metadata.get("score", 0) * 100, 2) }%</span> 
-            <br/> 
-            <p>{doc.page_content}</p>
-            <br/>
-            """
-            )
-
-        # Constructing the final template with all responses
-        template = f"""
-            <span class="no-response">Te comparto los {len(response)} resultados similares a tu pregunta:</span>
-            <br/>
-            <br/>
-        """ + " ".join(
-            response
-        )
-
-        return template
+        return response_logic    

@@ -33,7 +33,6 @@ LOGG_MESSAGES = {
     "EMBEDDING_SAVE_JSON": "Error while saving embedging file: {error}",
     "SUMMARIZATION_ERROR": "Ops!, there are a problem with summarization, {error}",
     "RETRIEVAL_DONT_HAVE_CONTEXT": "Ops!, I dont have context of your request",
-    "SELF_QUERY_RETRIEVAL_CONTENT_DESCRIPTION": "A collection of regulations, laws, and standards governing the production, distribution, and quality of food and beverages in Mexico.",
     "RETRIEVAL_FAILED_TO_SUMMARIZED": "Failed to summarizaze answer",
     "SELF_QUERY_RETRIEVAL_FAILED": "DOCUMENTS NOT FOUND FROM SELF QUERY RETRIEVAL",
 }

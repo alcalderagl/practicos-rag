@@ -25,20 +25,10 @@ pages = {
     ],
     "Retrievers": [
         st.Page(
-            "src/components/retrievers/initial_retriever_app.py",
-            title="Initial vector retriever",
+            "src/components/retrievers/retriever_app.py",
+            title="Vector retriever",
             icon="🧩",
-        ),
-        st.Page(
-            "src/components/retrievers/advance_retriever_app.py",
-            title="Advance vector retriever",
-            icon="📡",
-        ),
-        st.Page(
-            "src/components/retrievers/compare_retrievers_app.py",
-            title="Compare vector retrievers",
-            icon="⚖️",
-        ),
+        )
     ],
     "Benchmarks": [
         st.Page(

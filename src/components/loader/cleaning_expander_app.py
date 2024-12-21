@@ -22,7 +22,6 @@ def cleaning_expander(loader_response: ResponseLogic, file_name: str) -> list[st
     """
     # cleaning documents list
     cleaning_docs = list()
-    st.write(loader_response)
     with st.expander(
         LOGG_MESSAGES["APP_LABEL_CLEANING_FILE"].format(file_name=file_name)
     ):
