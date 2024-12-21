@@ -23,7 +23,7 @@ if len(st.session_state["generated_questions"]) > 0:
         with st.container():
             st.subheader("Initial RAG")
             evaluation_df = benchmark.evaluate(evaluation_data=evaluation)
-            # st.dataframe(evaluation_df)
+            st.dataframe(evaluation_df)
         with st.container():
             st.subheader("Advance RAG")
 else:
