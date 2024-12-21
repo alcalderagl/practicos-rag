@@ -70,15 +70,7 @@ if st.session_state.chat_history:
                         query_text=user_prompt, top_k=top_k
                     )
                     if bot_response.type_message == TypeMessage.INFO:
-                        best_resp = []
-                        for index, resp in enumerate(bot_response.response):
-                            best_resp.append(
-                                f"<span class=\"no-response\">Resultado {index + 1} - {round(resp.score * 100, 2) }%</span> <br/> {resp.payload['page_content']} <br/> <br/>"
-                            )
-                        chat.message = (
-                            f'<span class="no-response">Te comparto los {top_k} resultados similares a tu pregunta:</span><br/><br/>'
-                            + " ".join(best_resp)
-                        )
+                        chat.message = bot_response.response
                     else:
                         chat.message = bot_response.message
             st.markdown(

@@ -25,7 +25,7 @@ class VectorStoreClient:
         # getting or setting qdrant host
         self._host = os.getenv("QDRANT_HOST", "localhost")
         # getting or setting model embedding size
-        self.vector_size = os.getenv("VECTOR_SIZE", "512")
+        self.vector_size = os.getenv("VECTOR_SIZE", "1536")
         # setting vector params
         self._vectors_params = VectorParams(
             size=self.vector_size, distance=Distance.COSINE

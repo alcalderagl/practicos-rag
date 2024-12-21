@@ -15,7 +15,7 @@ services:
       - QDRANT_PORT=6333
       - VECTOR_STORE_NAME=regulaciones_mx
       - MODEL_EMBEDDING=text-embedding-ada-002
-      - VECTOR_SIZE=512
+      - VECTOR_SIZE=1536
       - REGULATIONS_FOLDER=data/regulations
       - EMBEDDINGS_FOLDER=data/embeddings
       - CHUNKING_FOLDER=data/chunks
